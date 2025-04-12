@@ -1,11 +1,10 @@
 'use client';
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { useInView } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
-import { cn } from '@/lib/utils';
 
 // GSAP'ı kaydet
 if (typeof window !== 'undefined') {
@@ -18,7 +17,7 @@ const About = () => {
   const contentRef = useRef<HTMLDivElement>(null);
   const featureRefs = useRef<(HTMLDivElement | null)[]>([]);
   
-  const isInView = useInView(sectionRef, { once: false, amount: 0.1 });
+  useInView(sectionRef, { once: false, amount: 0.1 });
   
   // Smooth scroll ve reveal animasyonları
   useGSAP(() => {
@@ -107,7 +106,7 @@ const About = () => {
           {/* Sol taraf - İçerik */}
           <div ref={contentRef} className="space-y-6">
             <p className="text-gray-700 leading-relaxed">
-              AR Solutions tarafından geliştirilen H-AR XaPP, kurumsal iç süreçleri ve çalışan deneyimini yeniden tanımlamak üzere tasarlanmış, modüler yapıya sahip premium bir "süper uygulamadır". Kurumların benzersiz ihtiyaçlarına göre şekillenen H-AR XaPP, iletişimi güçlendirir, süreçleri optimize eder ve çalışan bağlılığını artırır.
+              AR Solutions tarafından geliştirilen H-AR XaPP, kurumsal iç süreçleri ve çalışan deneyimini yeniden tanımlamak üzere tasarlanmış, modüler yapıya sahip premium bir &ldquo;süper uygulamadır&rdquo;. Kurumların benzersiz ihtiyaçlarına göre şekillenen H-AR XaPP, iletişimi güçlendirir, süreçleri optimize eder ve çalışan bağlılığını artırır.
             </p>
             
             <p className="text-gray-700 leading-relaxed">

@@ -38,7 +38,7 @@ export const AppleScrollEffect: React.FC<AppleScrollEffectProps> = ({
   const titleRef = useRef<HTMLDivElement>(null);
   
   // Responsive tasarım için
-  const [isMobile, setIsMobile] = useState(false);
+  const [, setIsMobile] = useState(false);
   
   useEffect(() => {
     const checkMobile = () => {

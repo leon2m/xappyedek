@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useEffect, useState } from 'react';
-import { motion, useScroll, useTransform, useSpring, MotionValue } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import gsap from 'gsap';
@@ -49,12 +49,10 @@ export const AppleStyleSection: React.FC<AppleStyleSectionProps> = ({
   const contentRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
   
-  const [isMobile, setIsMobile] = useState(false);
-  
   // Responsive tasarım için ekran boyutunu kontrol et
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      return window.innerWidth < 768;
     };
     
     checkMobile();

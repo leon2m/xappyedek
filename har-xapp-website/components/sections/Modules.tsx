@@ -2,7 +2,6 @@
 
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
-import Image from 'next/image';
 import Link from 'next/link';
 import { BiGroup, BiMoney, BiCode, BiCog } from 'react-icons/bi';
 import { HiChevronRight } from 'react-icons/hi';
@@ -216,14 +215,6 @@ const Modules = () => {
                     
                     {/* Görsel çerçevesi - premium görünüm için */}
                     <div className="absolute inset-4 border-2 border-dashed border-primary/20 rounded-lg pointer-events-none"></div>
-                    
-                    {/* Gerçek görseli eklenecek */}
-                    {/* <Image 
-                      src={currentModule.image} 
-                      alt={currentModule.title} 
-                      fill 
-                      className="object-contain p-4"
-                    /> */}
                   </div>
                 </div>
               </motion.div>

@@ -2,7 +2,6 @@
 
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { cn } from '@/lib/utils';
 import { featuresData } from '@/data/features';
 import { FeatureCard } from './FeatureCard';
 import { ParallaxLayer } from '@/components/sections/parallax/ParallaxLayer';

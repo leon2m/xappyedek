@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
@@ -8,7 +8,6 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import Image from 'next/image';
 import { AppleStyleSection } from './parallax/AppleStyleSection';
 import { AppleProductCard } from './parallax/AppleProductCard';
-import { cn } from '@/lib/utils';
 
 // GSAP'ı kaydet
 if (typeof window !== 'undefined') {
@@ -53,7 +52,6 @@ export const AppleStyleProductDemo = () => {
   
   // Transform efektleri
   const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
-  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
   
   // GSAP animasyonları
   useGSAP(() => {

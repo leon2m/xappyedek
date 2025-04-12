@@ -28,7 +28,7 @@ const CTA = () => {
               Operasyonel Mükemmelliğe İlk Adımı Atın
             </h2>
             <p className="text-lg mb-8 text-white/90">
-              H-AR XaPP'ın işletmenize nasıl değer katabileceğini keşfetmek için ücretsiz demo randevusu alın.
+              H-AR XaPP&apos;ın işletmenize nasıl değer katabileceğini keşfetmek için ücretsiz demo randevusu alın.
               Uzmanlarımız ihtiyaçlarınıza özel bir sunum hazırlayacaktır.
             </p>
             <div className="flex flex-wrap gap-4">

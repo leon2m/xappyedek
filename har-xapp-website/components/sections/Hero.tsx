@@ -1,12 +1,11 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
+import { motion, useSpring } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
 import Link from 'next/link';
-import Image from 'next/image';
-import { HiOutlineArrowNarrowRight, HiOutlineChevronDown, HiOutlineStar, HiSparkles } from 'react-icons/hi';
+import { HiOutlineArrowNarrowRight, HiOutlineChevronDown, HiOutlineStar } from 'react-icons/hi';
 
 // GSAP kaydını yap
 if (typeof window !== 'undefined') {
