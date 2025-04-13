@@ -16,14 +16,14 @@ interface FeatureCardProps {
 
 export function FeatureCard({ feature, index, className }: FeatureCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(cardRef, { once: false, amount: 0.3 });
+  const isInView = useInView(cardRef, { once: false, amount: 0.1 });
   
   const cardVariants = {
     hidden: { 
       opacity: 0, 
-      y: 50,
-      scale: 0.95,
-      rotateX: -5
+      y: 30,
+      scale: 0.98,
+      rotateX: -3
     },
     visible: {
       opacity: 1,
@@ -31,8 +31,8 @@ export function FeatureCard({ feature, index, className }: FeatureCardProps) {
       scale: 1,
       rotateX: 0,
       transition: {
-        duration: 0.7,
-        delay: index * 0.2,
+        duration: 0.5,
+        delay: index * 0.1,
         ease: [0.21, 0.45, 0.26, 0.95]
       }
     }
@@ -166,15 +166,6 @@ export function FeatureCard({ feature, index, className }: FeatureCardProps) {
           </div>
         )}
       </div>
-      
-      <motion.div 
-        className="flex items-center text-primary font-medium"
-        whileHover={{ x: 5 }}
-        transition={{ type: "spring", stiffness: 400, damping: 10 }}
-      >
-        Daha fazla bilgi 
-        <MoveRight className="ml-2 w-4 h-4" />
-      </motion.div>
     </motion.div>
   );
 } 

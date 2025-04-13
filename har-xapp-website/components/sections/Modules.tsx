@@ -17,7 +17,7 @@ const moduleIcons = {
 const Modules = () => {
   const [activeTab, setActiveTab] = useState('ik');
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: false, amount: 0.3 });
+  const isInView = useInView(ref, { once: false, amount: 0.2 });
 
   const modules = [
     {
@@ -92,7 +92,7 @@ const Modules = () => {
   };
 
   return (
-    <section ref={ref} className="py-20 relative overflow-hidden bg-white">
+    <section ref={ref} className="py-16 relative overflow-hidden bg-white">
       {/* Decorative elements */}
       <div className="absolute left-0 top-1/4 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-x-1/2"></div>
       <div className="absolute right-0 bottom-1/4 w-80 h-80 bg-secondary/5 rounded-full blur-3xl translate-x-1/2"></div>
@@ -104,7 +104,7 @@ const Modules = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-10"
         >
           <span className="text-sm font-semibold tracking-widest uppercase bg-primary/10 px-6 py-2 rounded-full text-primary">
             Entegre Çözümler

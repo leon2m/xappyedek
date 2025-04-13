@@ -15,52 +15,6 @@ import {
   HiOutlineArrowNarrowRight
 } from 'react-icons/hi';
 
-const QuickNav = () => {
-  const sections = [
-    { id: 'about', icon: <HiOutlineInformationCircle />, title: 'Hakkımızda', href: '/hakkimizda' },
-    { id: 'features', icon: <HiOutlineLightningBolt />, title: 'Özellikler', href: '/ozellikler' },
-    { id: 'modules', icon: <HiOutlineCog />, title: 'Modüller', href: '/ozellikler#modules' },
-    { id: 'integrations', icon: <HiOutlineDatabase />, title: 'Entegrasyonlar', href: '/ozellikler#integrations' },
-    { id: 'cta', icon: <HiOutlineArrowNarrowRight />, title: 'Demo Talep', href: '/demo-talep' },
-  ];
-
-  const scrollToSection = (id: string, href: string) => {
-    // Önce sayfada id'ye sahip elementi bulmaya çalış
-    const element = document.getElementById(id);
-    if (element) {
-      // Element bulunursa ona kaydır
-      element.scrollIntoView({ behavior: 'smooth' });
-    } else {
-      // Element bulunamazsa (farklı sayfadaysa) o sayfaya yönlendir
-      window.location.href = href;
-    }
-  };
-
-  return (
-    <motion.div 
-      initial={{ opacity: 0, x: 100 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.5, delay: 0.3 }}
-      className="fixed right-4 top-1/2 -translate-y-1/2 z-50 hidden lg:flex flex-col gap-2"
-    >
-      {sections.map((section) => (
-        <motion.button
-          key={section.id}
-          whileHover={{ scale: 1.1, x: -5 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => scrollToSection(section.id, section.href)}
-          className="group relative flex items-center justify-center w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full shadow-lg border border-primary/10 text-gray-500 hover:text-primary transition-all duration-300"
-        >
-          <span className="text-lg">{section.icon}</span>
-          <span className="absolute right-full mr-2 opacity-0 group-hover:opacity-100 whitespace-nowrap bg-white/90 backdrop-blur-sm px-3 py-1 rounded-lg shadow-lg border border-primary/10 text-sm font-medium transition-all duration-300">
-            {section.title}
-          </span>
-        </motion.button>
-      ))}
-    </motion.div>
-  );
-};
-
 const Integrations = () => {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: false, amount: 0.3 });
@@ -117,7 +71,6 @@ const Integrations = () => {
 
   return (
     <>
-      <QuickNav />
       <section id="integrations" ref={ref} className="py-20 bg-gradient-to-b from-white to-primary-50 relative overflow-hidden">
         {/* Arka plan dekoratif elemanları */}
         <div className="absolute w-3/4 h-3/4 right-0 top-0 rounded-bl-full bg-gradient-to-bl from-primary/5 to-transparent -z-10"></div>

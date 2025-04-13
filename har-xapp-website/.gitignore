@@ -39,3 +39,45 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Production Build 
+/out
+/build
+
+# Environment files
+.env*.local
+.env.production
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Kurumsal IDE'ler ve editörler
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Loglar
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Sistem Dosyaları
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Diğer
+.vercel
+.netlify

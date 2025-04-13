@@ -61,59 +61,59 @@ const Hero = () => {
     const section = sectionRef.current;
     
     if (section) {
-      // Apple tarzı parallax için ileri fırlatma efekti
+      // Apple tarzı parallax için ileri fırlatma efekti - değerleri güncelliyorum
       gsap.to(".hero-content", {
-        y: 400,
-        scale: 0.8,
+        y: 200, // Daha az ileri fırlatma
+        scale: 0.9, // Daha hafif küçültme
         opacity: 0,
         ease: "power2.inOut",
         scrollTrigger: {
           trigger: section,
           start: "top top",
-          end: "bottom top",
-          scrub: true,
+          end: "50% top", // Daha kısa mesafe
+          scrub: 1, // Daha yumuşak efekt için
         },
       });
       
-      // Apple tarzı blur efekti
+      // Apple tarzı blur efekti - değerleri güncelliyorum
       gsap.to(".parallax-blur", {
-        filter: "blur(20px)",
+        filter: "blur(10px)", // Daha az blur
         opacity: 0,
         ease: "power2.inOut",
         scrollTrigger: {
           trigger: section,
           start: "top top",
-          end: "30% top",
-          scrub: true,
+          end: "25% top", // Daha kısa mesafe
+          scrub: 1, // Daha yumuşak efekt 
         },
       });
       
-      // Arka plan öğelerinin kayboluşu
+      // Arka plan öğelerinin kayboluşu - değerleri güncelliyorum
       gsap.to(".bg-elements", {
-        y: -200,
+        y: -100, // Daha az hareket
         opacity: 0,
         ease: "power2.inOut",
         scrollTrigger: {
           trigger: section,
           start: "top top",
-          end: "30% top",
-          scrub: true,
+          end: "25% top", // Daha kısa mesafe
+          scrub: 1, // Daha yumuşak efekt
         },
       });
       
-      // Arka plan ek animasyonları
+      // Arka plan ek animasyonları - değerleri güncelliyorum
       gsap.to(".hero-bg-gradient", {
         opacity: 0.5,
-        scale: 1.1,
+        scale: 1.05, // Daha az scale efekti
         ease: "power1.inOut",
         scrollTrigger: {
           trigger: section,
           start: "top top",
-          end: "bottom top",
-          scrub: true,
+          end: "50% top", // Daha kısa mesafe
+          scrub: 1, // Daha yumuşak efekt
         },
       });
-      
+
       // Mobil cihazlarda ScrollTrigger'ı güncelle
       const resizeObserver = new ResizeObserver(() => {
         ScrollTrigger.refresh();
@@ -171,7 +171,7 @@ const Hero = () => {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-[150vh] w-full overflow-hidden bg-white"
+      className="relative min-h-[120vh] w-full overflow-hidden bg-white" // Hero yüksekliğini azalttım
     >
       {/* Ana arka plan gradyenı */}
       <motion.div 
@@ -457,7 +457,7 @@ const Hero = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.5 }}
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center text-white"
+        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center"
       >
         <span className="mb-2 text-sm text-gray-400">Aşağı Kaydır</span>
         <motion.div

@@ -45,66 +45,67 @@ const CTA = () => {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="bg-white/10 backdrop-blur-sm p-6 md:p-8 rounded-xl shadow-xl border border-white/20"
+            className="bg-white/20 backdrop-blur-sm p-6 md:p-8 rounded-xl shadow-xl border border-white/20"
           >
             <h3 className="text-xl font-semibold mb-6 text-center">Demo Talep Formu</h3>
             <form className="space-y-4">
               <div className="space-y-2">
-                <label htmlFor="name" className="block text-sm font-medium">Adınız Soyadınız</label>
+                <label htmlFor="name" className="block text-sm font-medium text-white">Adınız Soyadınız</label>
                 <input
                   type="text"
                   id="name"
-                  className="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-md focus:outline-none focus:ring-2 focus:ring-white"
+                  className="w-full px-4 py-3 bg-white/30 border border-white/40 rounded-md text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white"
                   placeholder="Adınız Soyadınız"
                   required
                 />
               </div>
               
               <div className="space-y-2">
-                <label htmlFor="company" className="block text-sm font-medium">Şirket</label>
+                <label htmlFor="company" className="block text-sm font-medium text-white">Şirket</label>
                 <input
                   type="text"
                   id="company"
-                  className="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-md focus:outline-none focus:ring-2 focus:ring-white"
+                  className="w-full px-4 py-3 bg-white/30 border border-white/40 rounded-md text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white"
                   placeholder="Şirket Adı"
                   required
                 />
               </div>
               
               <div className="space-y-2">
-                <label htmlFor="email" className="block text-sm font-medium">E-posta</label>
+                <label htmlFor="email" className="block text-sm font-medium text-white">E-posta</label>
                 <input
                   type="email"
                   id="email"
-                  className="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-md focus:outline-none focus:ring-2 focus:ring-white"
+                  className="w-full px-4 py-3 bg-white/30 border border-white/40 rounded-md text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white"
                   placeholder="E-posta Adresiniz"
                   required
                 />
               </div>
               
               <div className="space-y-2">
-                <label htmlFor="phone" className="block text-sm font-medium">Telefon</label>
+                <label htmlFor="phone" className="block text-sm font-medium text-white">Telefon</label>
                 <input
                   type="tel"
                   id="phone"
-                  className="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-md focus:outline-none focus:ring-2 focus:ring-white"
+                  className="w-full px-4 py-3 bg-white/30 border border-white/40 rounded-md text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white"
                   placeholder="Telefon Numaranız"
                 />
               </div>
               
               <div className="space-y-2">
-                <label htmlFor="interests" className="block text-sm font-medium">İlgilendiğiniz Modüller</label>
+                <label htmlFor="interests" className="block text-sm font-medium text-white">İlgilendiğiniz Modüller</label>
                 <select
                   id="interests"
-                  className="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-md focus:outline-none focus:ring-2 focus:ring-white"
+                  className="w-full px-4 py-3 bg-white/30 border border-white/40 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-white"
                   defaultValue=""
+                  style={{ color: 'white', backgroundColor: 'rgba(255, 255, 255, 0.3)' }}
                 >
-                  <option value="" disabled>Seçiniz</option>
-                  <option value="ik">İnsan Kaynakları</option>
-                  <option value="finans">Finans</option>
-                  <option value="it">IT</option>
-                  <option value="operasyon">Operasyon</option>
-                  <option value="all">Tümü</option>
+                  <option value="" disabled style={{ color: '#333', backgroundColor: 'white' }}>Seçiniz</option>
+                  <option value="ik" style={{ color: '#333', backgroundColor: 'white' }}>İnsan Kaynakları</option>
+                  <option value="finans" style={{ color: '#333', backgroundColor: 'white' }}>Finans</option>
+                  <option value="it" style={{ color: '#333', backgroundColor: 'white' }}>IT</option>
+                  <option value="operasyon" style={{ color: '#333', backgroundColor: 'white' }}>Operasyon</option>
+                  <option value="all" style={{ color: '#333', backgroundColor: 'white' }}>Tümü</option>
                 </select>
               </div>
               
@@ -117,7 +118,7 @@ const CTA = () => {
                 Demo Talep Et
               </motion.button>
               
-              <p className="text-sm text-white/70 text-center mt-4">
+              <p className="text-sm text-white/80 text-center mt-4">
                 Bilgileriniz yalnızca demo randevusu için kullanılacaktır.
               </p>
             </form>

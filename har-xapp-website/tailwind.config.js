@@ -6,8 +6,13 @@ module.exports = {
     './app/**/*.{js,ts,jsx,tsx,mdx}',
     './src/**/*.{js,ts,jsx,tsx,mdx}',
   ],
-  // Dark mode tamamen devre dışı
-  darkMode: false,
+  // Dark mode'u kaldırıyoruz
+  future: {
+    hoverOnlyWhenSupported: true,
+    respectDefaultRingColorOpacity: true,
+    disableColorOpacityUtilitiesByDefault: true,
+    purgeLayersByDefault: true,
+  },
   theme: {
     screens: {
       'sm': '640px',
@@ -72,10 +77,10 @@ module.exports = {
         'gradient-x': 'gradient-x 3s ease infinite',
         'angle': 'angle 3s linear infinite',
         'float': 'float 6s ease-in-out infinite',
-        'parallax-scroll': 'parallaxScroll 1.2s cubic-bezier(0.25, 0.1, 0.25, 1) forwards',
-        'smooth-scroll': 'smoothScroll 0.8s cubic-bezier(0.25, 0.1, 0.25, 1) forwards',
-        'smooth-parallax': 'smoothParallax 1s cubic-bezier(0.4, 0, 0.2, 1) forwards',
-        'smooth-reveal': 'smoothReveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+        'parallax-scroll': 'parallaxScroll 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+        'smooth-scroll': 'smoothScroll 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+        'smooth-parallax': 'smoothParallax 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+        'smooth-reveal': 'smoothReveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards',
       },
       // 3D transformasyon özellikleri - Apple tarzı
       perspective: {
@@ -143,25 +148,63 @@ module.exports = {
           '50%': { transform: 'translateY(-20px)' },
         },
         'parallaxScroll': {
-          '0%': { transform: 'translateY(60px)', opacity: 0.2 },
-          '100%': { transform: 'translateY(0)', opacity: 1 },
+          '0%': { transform: 'translateY(40px)', opacity: 0.3, willChange: 'transform, opacity' },
+          '100%': { transform: 'translateY(0)', opacity: 1, willChange: 'auto' },
         },
         'smoothScroll': {
-          '0%': { transform: 'translateY(5px)', opacity: 0.8 },
-          '100%': { transform: 'translateY(0)', opacity: 1 },
+          '0%': { transform: 'translateY(5px)', opacity: 0.8, willChange: 'transform, opacity' },
+          '100%': { transform: 'translateY(0)', opacity: 1, willChange: 'auto' },
         },
         'smoothParallax': {
-          '0%': { transform: 'translateY(30px)', opacity: 0.3 },
-          '50%': { transform: 'translateY(15px)', opacity: 0.6 },
-          '100%': { transform: 'translateY(0)', opacity: 1 },
+          '0%': { transform: 'translateY(20px)', opacity: 0.4, willChange: 'transform, opacity' },
+          '50%': { transform: 'translateY(10px)', opacity: 0.7 },
+          '100%': { transform: 'translateY(0)', opacity: 1, willChange: 'auto' },
         },
         'smoothReveal': {
-          '0%': { transform: 'translateY(20px) scale(0.98)', opacity: 0 },
-          '60%': { transform: 'translateY(10px) scale(0.99)', opacity: 0.6 },
-          '100%': { transform: 'translateY(0) scale(1)', opacity: 1 },
+          '0%': { transform: 'translateY(15px) scale(0.98)', opacity: 0, willChange: 'transform, opacity, scale' },
+          '60%': { transform: 'translateY(7px) scale(0.99)', opacity: 0.7 },
+          '100%': { transform: 'translateY(0) scale(1)', opacity: 1, willChange: 'auto' },
         },
       },
     },
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [
+    require('tailwindcss-animate'),
+    // Performans optimizasyonu için ek plugin
+    function({ addBase, addUtilities }) {
+      addBase({
+        'html': {
+          scrollBehavior: 'smooth',
+        },
+        '*, *::before, *::after': {
+          backfaceVisibility: 'hidden',
+        },
+        // Tüm animasyonlar için hardware acceleration
+        '.animate-*, .motion-*, .transition-*': {
+          willChange: 'transform, opacity',
+          backfaceVisibility: 'hidden',
+        },
+      });
+      
+      // GPU hızlandırma için utility'ler
+      addUtilities({
+        '.will-change-transform': {
+          willChange: 'transform',
+        },
+        '.will-change-opacity': {
+          willChange: 'opacity',
+        },
+        '.will-change-scroll': {
+          willChange: 'scroll-position',
+        },
+        '.backface-hidden': {
+          backfaceVisibility: 'hidden',
+        },
+        '.gpu-accelerated': {
+          transform: 'translateZ(0)',
+          backfaceVisibility: 'hidden',
+        },
+      });
+    },
+  ],
 } 

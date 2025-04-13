@@ -2,6 +2,159 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Sayfa yüklenme/fade-in animasyonu */
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.opacity-0 {
+  opacity: 0;
+}
+
+body.loaded .opacity-0 {
+  opacity: 1;
+  transition: opacity 0.6s ease-out;
+}
+
+/* Tam ekran yükleme animasyonu için özel stiller */
+.loader-background {
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 1) 0%, rgba(250, 250, 250, 0.98) 100%);
+  z-index: 9999 !important;
+}
+
+.loader-leaf {
+  filter: drop-shadow(0 0 8px rgba(76, 139, 50, 0.3));
+}
+
+.loader-path {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: dash 3s ease-in-out forwards infinite alternate;
+}
+
+@keyframes dash {
+  from {
+    stroke-dashoffset: 1000;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes float-leaf {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-15px) rotate(5deg);
+  }
+}
+
+.floating-leaf {
+  animation: float-leaf 6s ease-in-out infinite;
+}
+
+/* İlk sayfanın içeriği için fade-in */
+.page-content-initial {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 1s ease-out, transform 1s ease-out;
+}
+
+body.loaded .page-content-initial {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Sayfa geçişleri için animasyonlar */
+.page-transitions-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.page-transitions-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.page-transitions-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.page-transitions-exit-active {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 200ms, transform 200ms;
+}
+
+/* Doğa temalı loading bar elementleri */
+.nature-loading-bar {
+  background: linear-gradient(to right, #4C8B32, #95C01E, #d6efc7);
+  animation: leaf-grow 1.5s ease-in-out infinite;
+}
+
+.leaf-particle {
+  filter: drop-shadow(0 0 4px rgba(76, 139, 50, 0.4));
+  animation: leaf-float 2s ease-in-out infinite;
+}
+
+@keyframes leaf-grow {
+  0% {
+    background-position: 0% 50%;
+    box-shadow: 0 0 10px rgba(76, 139, 50, 0.1);
+  }
+  50% {
+    background-position: 100% 50%;
+    box-shadow: 0 0 15px rgba(149, 192, 30, 0.3);
+  }
+  100% {
+    background-position: 0% 50%;
+    box-shadow: 0 0 10px rgba(76, 139, 50, 0.1);
+  }
+}
+
+@keyframes leaf-float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-5px) rotate(5deg);
+  }
+}
+
+/* GPU Hızlandırma Optimizasyonları */
+.gpu-accelerated {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.transition-gpu {
+  transition-property: transform, opacity;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+/* Sayfa ekranında kaydırma efekti */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  will-change: transform, opacity;
+}
+
+.scroll-reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 :root {
   --foreground-rgb: 30, 41, 59; /* slate-800 */
   --background-start-rgb: 250, 250, 253;
@@ -61,6 +214,9 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Hızlandırılmış scrolling */
+  scroll-snap-type: proximity;
+  text-rendering: optimizeSpeed;
 }
 
 /* Smooth scroll için daha iyi performans */
@@ -79,6 +235,15 @@ body {
   ) rgb(var(--background-start-rgb));
   overflow-x: hidden;
   scroll-behavior: smooth;
+  /* GPU Hızlandırma */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Sayfa içeriği yüklendiğinde animasyon */
+body.loaded .animate-on-load {
+  animation: smooth-reveal 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 /* Açık renkli bölümler için arka plan */

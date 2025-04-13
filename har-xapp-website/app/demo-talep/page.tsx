@@ -99,15 +99,71 @@ const DemoRequestPage = () => {
     e.preventDefault();
     setFormState(prev => ({ ...prev, loading: true }));
     
-    // Simulating form submission
-    setTimeout(() => {
-      setFormState(prev => ({ ...prev, submitted: true, loading: false }));
+    // Static export modunda API routes çalışmaz, bu durumda simülasyon yapıyoruz
+    if (process.env.NEXT_PUBLIC_PRODUCTION === 'true' || process.env.NODE_ENV === 'production') {
+      console.log('Prodüksiyon ortamında form gönderimi simüle ediliyor');
+      console.log('Bu kısımda harici bir API ile entegrasyon yapmanız gerekiyor');
       
-      // Redirect after successful submission
+      // Demo amaçlı form verilerini console'a yaz
+      console.log('Form verileri:', {
+        name: formState.name,
+        company: formState.company,
+        position: formState.position,
+        email: formState.email,
+        phone: formState.phone,
+        interests: formState.interests,
+        message: formState.message,
+      });
+      
+      // Simüle etmek için timeout kullan
       setTimeout(() => {
-        router.push('/demo-talep/tesekkurler');
-      }, 2000);
-    }, 1500);
+        setFormState(prev => ({ ...prev, submitted: true, loading: false }));
+        
+        // Başarılı yanıt sonrası teşekkürler sayfasına yönlendir
+        setTimeout(() => {
+          router.push('/demo-talep/tesekkurler');
+        }, 2000);
+      }, 1500);
+      
+      return;
+    }
+    
+    // Yerel geliştirme ortamında API'yi çağır
+    fetch('/api/demo-request', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: formState.name,
+        company: formState.company,
+        position: formState.position,
+        email: formState.email,
+        phone: formState.phone,
+        interests: formState.interests,
+        message: formState.message,
+      }),
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Form gönderimi başarısız oldu');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('Demo talebi başarıyla gönderildi:', data);
+        setFormState(prev => ({ ...prev, submitted: true, loading: false }));
+        
+        // Başarılı yanıt sonrası teşekkürler sayfasına yönlendir
+        setTimeout(() => {
+          router.push('/demo-talep/tesekkurler');
+        }, 2000);
+      })
+      .catch(error => {
+        console.error('Form gönderim hatası:', error);
+        setFormState(prev => ({ ...prev, loading: false }));
+        alert('Demo talep formu gönderimi sırasında bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.');
+      });
   };
   
   const nextStep = () => {
@@ -359,7 +415,7 @@ const DemoRequestPage = () => {
                       >
                         {currentStep > index + 1 ? '✓' : index + 1}
                       </div>
-                      <span className={`text-xs mt-1 ${currentStep === index + 1 ? 'text-primary' : 'text-gray-500'}`}>
+                      <span className={`text-xs mt-1 ${currentStep === index + 1 ? 'text-primary font-medium' : 'text-gray-500'}`}>
                         {index === 0 && 'Bilgiler'}
                         {index === 1 && 'İlgi Alanları'}
                         {index === 2 && 'Tamamla'}
@@ -377,7 +433,7 @@ const DemoRequestPage = () => {
               </div>
               
               {/* Form Content */}
-              <form ref={formRef} onSubmit={handleSubmit} className="p-8 bg-gray-50 transform-gpu" style={{ transformStyle: 'preserve-3d' }}>
+              <form ref={formRef} onSubmit={handleSubmit} className="p-8 bg-gray-50/80 backdrop-blur-sm transform-gpu" style={{ transformStyle: 'preserve-3d' }}>
                 {renderStepContent()}
                 
                 {/* Navigation Buttons */}

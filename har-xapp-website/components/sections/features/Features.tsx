@@ -14,18 +14,18 @@ export function Features() {
     offset: ["start end", "end start"]
   });
   
-  // Paralalaks efektleri için dönüşümler
-  const headingY = useTransform(scrollYProgress, [0, 0.5], [100, 0]);
-  const headingOpacity = useTransform(scrollYProgress, [0, 0.3], [0, 1]);
-  const subtitleY = useTransform(scrollYProgress, [0.1, 0.5], [50, 0]);
-  const subtitleOpacity = useTransform(scrollYProgress, [0.1, 0.4], [0, 1]);
+  // Paralalaks efektleri için dönüşümler - daha hızlı görünmesi için değerleri güncelledim
+  const headingY = useTransform(scrollYProgress, [0, 0.2], [50, 0]);
+  const headingOpacity = useTransform(scrollYProgress, [0, 0.15], [0, 1]);
+  const subtitleY = useTransform(scrollYProgress, [0.05, 0.25], [25, 0]);
+  const subtitleOpacity = useTransform(scrollYProgress, [0.05, 0.2], [0, 1]);
   
-  // Backdrop parçaları için dönüşümler
-  const sphereScale = useTransform(scrollYProgress, [0.2, 0.8], [0.8, 1.2]);
-  const sphereOpacity = useTransform(scrollYProgress, [0.2, 0.4, 0.8], [0, 1, 0.5]);
+  // Backdrop parçaları için dönüşümler - daha erken tetiklenmesi için değerleri güncelledim
+  const sphereScale = useTransform(scrollYProgress, [0.1, 0.4], [0.8, 1.2]);
+  const sphereOpacity = useTransform(scrollYProgress, [0.1, 0.2, 0.4], [0, 1, 0.5]);
   
   return (
-    <section id="features" className="relative overflow-hidden py-24 md:py-32 bg-white">
+    <section id="features" className="relative overflow-hidden py-16 md:py-24 bg-white">
       {/* Arka plan efektleri */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <ParallaxLayer depth={-0.2} className="absolute -top-[20%] -right-[10%] opacity-60">
@@ -47,7 +47,7 @@ export function Features() {
       </div>
       
       <div ref={containerRef} className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-20 md:mb-32">
+        <div className="text-center mb-12 md:mb-20">
           <motion.div
             className="relative inline-block"
             style={{ y: headingY, opacity: headingOpacity }}

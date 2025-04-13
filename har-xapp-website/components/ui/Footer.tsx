@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import gsap from 'gsap';
@@ -14,6 +14,11 @@ if (typeof window !== 'undefined') {
 const Footer = () => {
   const footerRef = useRef<HTMLDivElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
+  
+  // State for subscription form
+  const [email, setEmail] = useState('');
+  const [isSubscribing, setIsSubscribing] = useState(false);
+  const [subscribeStatus, setSubscribeStatus] = useState<null | 'success' | 'error'>(null);
   
   // Mouse hareketi için
   const springConfig = { damping: 25, stiffness: 200 };
@@ -94,17 +99,17 @@ const Footer = () => {
         { label: "Özellikler", href: "/ozellikler" },
         { label: "Modüller", href: "/ozellikler#modules" },
         { label: "Entegrasyonlar", href: "/ozellikler#integrations" },
-        { label: "Fiyatlandırma", href: "/iletisim" },
+        { label: "Fiyatlandırma", href: "/fiyatlandirma" },
       ]
     },
     {
       title: "Çözümler",
       links: [
-        { label: "İnsan Kaynakları", href: "/ozellikler#hr" },
-        { label: "Finans & Muhasebe", href: "/ozellikler#finans" },
-        { label: "Operasyon Yönetimi", href: "/ozellikler#operasyon" },
-        { label: "İdari İşler", href: "/ozellikler#idari" },
-        { label: "Kurumsal Akademi", href: "/ozellikler#akademi" },
+        { label: "İnsan Kaynakları", href: "/cozumler/insan-kaynaklari" },
+        { label: "Finans & Muhasebe", href: "/cozumler/finans-muhasebe" },
+        { label: "Operasyon Yönetimi", href: "/cozumler/operasyon-yonetimi" },
+        { label: "İdari İşler", href: "/cozumler/idari-isler" },
+        { label: "Kurumsal Akademi", href: "/cozumler/kurumsal-akademi" },
       ]
     },
     {
@@ -218,8 +223,8 @@ const Footer = () => {
             />
             
             <p className="mt-4 text-slate-600 max-w-md">
-              Artırılmış gerçeklik teknolojilerini iş süreçlerinize entegre ederek 
-              operasyonel verimliliğinizi artırın.
+              Çalışan deneyimi için tasarlanmış süper uygulama. Sadelikten ilham alıyor, 
+              karmaşıklığı ortadan kaldırıyor.
             </p>
           </motion.div>
           
@@ -231,16 +236,38 @@ const Footer = () => {
             transition={{ delay: 0.3, duration: 0.6 }}
           >
             <h3 className="text-slate-800 font-medium mb-3 text-lg">Gelişmelerden Haberdar Olun</h3>
-            <div className="relative flex w-full md:w-auto">
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              if (!email) return;
+              
+              setIsSubscribing(true);
+              
+              // Simüle edilmiş bir API çağrısı - gerçek uygulamada API'ye istek gönderilecek
+              setTimeout(() => {
+                setIsSubscribing(false);
+                setSubscribeStatus('success');
+                setEmail('');
+                
+                // 3 saniye sonra başarı mesajını kaldır
+                setTimeout(() => {
+                  setSubscribeStatus(null);
+                }, 3000);
+              }, 1000);
+            }} className="relative flex w-full md:w-auto">
               <input 
-                type="email" 
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="E-posta adresiniz" 
                 className="bg-slate-100 border border-slate-200 text-slate-800 rounded-l-lg py-3 px-4 w-full md:w-64 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                required
               />
               <motion.button 
-                className="relative overflow-hidden rounded-r-lg bg-gradient-to-r from-primary to-secondary px-5 py-3 text-white"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.98 }}
+                className={`relative overflow-hidden rounded-r-lg px-5 py-3 text-white ${isSubscribing ? 'bg-gray-400' : 'bg-gradient-to-r from-primary to-secondary'}`}
+                whileHover={!isSubscribing ? { scale: 1.05 } : {}}
+                whileTap={!isSubscribing ? { scale: 0.98 } : {}}
+                disabled={isSubscribing}
+                type="submit"
               >
                 <motion.span
                   className="absolute inset-0 bg-white"
@@ -250,12 +277,48 @@ const Footer = () => {
                     transition: { duration: 0.3 }
                   }}
                 />
-                <span className="relative z-10">Abone Ol</span>
+                <span className="relative z-10">
+                  {isSubscribing ? (
+                    <span className="flex items-center">
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Bekleyin...
+                    </span>
+                  ) : (
+                    'Abone Ol'
+                  )}
+                </span>
               </motion.button>
-            </div>
-            <p className="text-slate-500 text-sm mt-2">
-              Gizliliğinize saygı duyuyoruz. İstediğiniz zaman abonelikten çıkabilirsiniz.
-            </p>
+            </form>
+            
+            {subscribeStatus === 'success' && (
+              <motion.p 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-green-600 text-sm mt-2 font-medium"
+              >
+                Başarıyla abone oldunuz! Teşekkürler.
+              </motion.p>
+            )}
+            
+            {subscribeStatus === 'error' && (
+              <motion.p 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-red-600 text-sm mt-2 font-medium"
+              >
+                Bir hata oluştu. Lütfen tekrar deneyin.
+              </motion.p>
+            )}
+            
+            {!subscribeStatus && (
+              <p className="text-slate-500 text-sm mt-2">
+                Gizliliğinize saygı duyuyoruz. İstediğiniz zaman abonelikten çıkabilirsiniz.
+              </p>
+            )}
+            
             <div className="mt-5 text-slate-600 text-sm">
               <p className="mb-1"><strong>AR Solutions Teknoloji A.Ş.</strong></p>
               <p className="mb-1">Ataşehir Bulvarı, Ataşehir İş Merkezi</p>
@@ -265,89 +328,62 @@ const Footer = () => {
           </motion.div>
         </div>
         
-        {/* Orta bölüm - Linkler */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 mb-16 border-b border-slate-200 pb-16">
-          {footerLinks.map((group, groupIndex) => (
+        {/* Ana Footer Linkleri */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+          {footerLinks.map((group, index) => (
             <motion.div 
-              key={group.title} 
+              key={group.title}
               className="footer-column"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ 
-                duration: 0.5, 
-                delay: 0.1 + (groupIndex * 0.1) 
-              }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1, duration: 0.5 }}
+              viewport={{ once: true }}
             >
-              <h3 className="text-slate-800 font-medium mb-5 text-lg">{group.title}</h3>
-              <ul className="space-y-3">
-                {group.links.map((link, linkIndex) => (
-                  <motion.li 
-                    key={link.href}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ 
-                      duration: 0.3, 
-                      delay: 0.2 + (groupIndex * 0.1) + (linkIndex * 0.05) 
-                    }}
-                  >
+              <h3 className="text-lg font-semibold text-slate-800 mb-4">{group.title}</h3>
+              <ul className="space-y-2">
+                {group.links.map((link) => (
+                  <li key={link.href}>
                     <Link 
                       href={link.href}
-                      className="text-slate-600 hover:text-primary transition-colors relative group flex items-center"
+                      className="text-slate-600 hover:text-primary transition-colors duration-200 hover:underline text-sm"
                     >
-                      <motion.span 
-                        className="absolute left-0 w-0 h-0.5 bg-gradient-to-r from-primary to-secondary bottom-0"
-                        whileHover={{ width: '100%' }}
-                        transition={{ duration: 0.3 }}
-                      />
-                      <motion.span
-                        whileHover={{ x: 5 }}
-                        transition={{ type: "spring", stiffness: 400 }}
-                      >
-                        {link.label}
-                      </motion.span>
+                      {link.label}
                     </Link>
-                  </motion.li>
+                  </li>
                 ))}
               </ul>
             </motion.div>
           ))}
         </div>
         
-        {/* Alt bölüm - Telif ve Sosyal Medya */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-          <motion.p 
-            className="text-slate-500 text-sm"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.7 }}
-          >
-            © {new Date().getFullYear()} AR Solutions Teknoloji A.Ş. Tüm hakları saklıdır.
-          </motion.p>
+        {/* Alt Footer - Telif Hakkı */}
+        <div className="border-t border-slate-200 pt-8">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+              <p className="text-slate-500 text-sm">
+                &copy; {new Date().getFullYear()} AR Solutions. Tüm hakları saklıdır.
+              </p>
+            </div>
+            
+            {/* Sosyal Medya */}
+            <div className="flex space-x-4">
+              {socialLinks.map((link) => (
+                <a 
+                  key={link.href}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={link.label}
+                  className="text-slate-400 hover:text-primary transition-colors duration-200"
+                >
+                  <i className={link.icon + " text-xl"}></i>
+                </a>
+              ))}
+            </div>
+          </div>
           
-          <motion.div 
-            className="flex items-center space-x-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.9 }}
-          >
-            {socialLinks.map((social, index) => (
-              <motion.a
-                key={social.href}
-                href={social.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-slate-600 hover:text-primary transition-colors"
-                aria-label={social.label}
-                whileHover={{ scale: 1.2, rotate: 10 }}
-                whileTap={{ scale: 0.9 }}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 1 + (index * 0.1) }}
-              >
-                <i className={`${social.icon} text-xl`}></i>
-              </motion.a>
-            ))}
-          </motion.div>
+          {/* İletişim Bilgileri */}
+
         </div>
       </div>
     </motion.footer>

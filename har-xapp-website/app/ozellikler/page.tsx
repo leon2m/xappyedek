@@ -1,486 +1,404 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
-import { motion, useInView, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { useState, useRef, useEffect } from 'react';
+import { motion, useTransform, useScroll } from 'framer-motion';
 import Link from 'next/link';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
-import { HiOutlineArrowNarrowRight, HiUserGroup, HiCurrencyDollar, HiOfficeBuilding, HiShoppingBag, 
-  HiDesktopComputer, HiChartBar, HiLightBulb, HiSparkles, HiAcademicCap, HiHeart } from 'react-icons/hi';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { 
+  HiSparkles, 
+  HiOutlineArrowNarrowRight, 
+  HiOfficeBuilding,
+  HiUserGroup, 
+  HiHome,
+  HiCurrencyDollar,
+  HiChatAlt,
+  HiShoppingBag,
+  HiDesktopComputer,
+  HiChartBar,
+  HiLightBulb,
+  HiHeart,
+  HiAcademicCap,
+  HiCheck,
+} from 'react-icons/hi';
 import { RiRecycleLine } from 'react-icons/ri';
-import type { ReactNode } from 'react';
+import React from 'react';
 
-gsap.registerPlugin(ScrollTrigger);
+// GSAP kaydı
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
-// Modül arayüzü
-interface ModuleType {
+interface Module {
   id: string;
-  icon: ReactNode;
+  icon: React.ReactNode;
   title: string;
   description: string;
   features: string[];
 }
 
-// Modül kartı bileşeni
-const ModuleCard = ({ module, index, activeModuleId, setActiveModuleId }: { 
-  module: ModuleType, 
-  index: number,
-  activeModuleId: string | null,
-  setActiveModuleId: (id: string | null) => void
-}) => {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(cardRef, { once: false, amount: 0.3 });
-  const isActive = activeModuleId === module.id;
+interface ModuleCardProps {
+  module: Module;
+  index: number;
+  activeModuleId: string | null;
+  setActiveModuleId: (id: string | null) => void;
+}
+
+// ModuleCard bileşenini performans için optimize edelim
+const ModuleCard = React.memo(({ module, index, activeModuleId, setActiveModuleId }: ModuleCardProps) => {
+  // Seçili modülü kontrol etmek için basit bir karşılaştırma
+  const isSelected = activeModuleId === module.id;
   
-  // 3D Tilt efekti
-  useEffect(() => {
-    const card = cardRef.current;
-    if (!card) return;
-    
-    const handleMouseMove = (e: MouseEvent) => {
-      if (isActive) return; // Aktif kartlarda tilt efekti devre dışı
-      
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      
-      const xPercent = x / rect.width - 0.5;
-      const yPercent = y / rect.height - 0.5;
-      
-      gsap.to(card, {
-        rotationY: xPercent * 10,
-        rotationX: yPercent * -10,
-        transformPerspective: 1000,
-        duration: 0.5,
-        ease: "power2.out"
-      });
-    };
-    
-    const handleMouseLeave = () => {
-      if (isActive) return;
-      
-      gsap.to(card, {
-        rotationY: 0,
-        rotationX: 0,
-        duration: 0.5,
-        ease: "power2.out"
-      });
-    };
-    
-    card.addEventListener('mousemove', handleMouseMove);
-    card.addEventListener('mouseleave', handleMouseLeave);
-    
-    return () => {
-      card.removeEventListener('mousemove', handleMouseMove);
-      card.removeEventListener('mouseleave', handleMouseLeave);
-    };
-  }, [isActive]);
+  // useCallback ile performansı arttıralım
+  const handleClick = React.useCallback(() => {
+    setActiveModuleId(isSelected ? null : module.id);
+  }, [isSelected, module.id, setActiveModuleId]);
   
   return (
     <motion.div
-      ref={cardRef}
-      initial={{ opacity: 0, y: 50 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-      transition={{ duration: 0.6, delay: index * 0.1 }}
-      className={`relative overflow-hidden rounded-2xl p-6 shadow-xl border border-primary-100 transform-gpu cursor-pointer
-        ${isActive ? 'bg-white/95 backdrop-blur-lg z-20' : 'bg-white/70 backdrop-blur-md hover:bg-white/80'}`}
-      style={{ transformStyle: 'preserve-3d' }}
-      onClick={() => setActiveModuleId(isActive ? null : module.id)}
-    >
-      <motion.div 
-        className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/10"
-        animate={{ 
-          opacity: isActive ? 0.3 : 0.1,
-          scale: isActive ? 1.05 : 1
-        }}
-        transition={{ duration: 0.5 }}
-      />
-      
-      <div
-        className="relative z-10"
-        style={{ transform: 'translateZ(30px)' }}
-      >
-        <div className="flex items-center">
-          <div className="text-3xl p-3 rounded-xl bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
-            {module.icon}
-          </div>
-          <h3 className="text-xl font-bold ml-3">{module.title}</h3>
-        </div>
-        
-        <AnimatePresence>
-          {isActive && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.5 }}
-              className="overflow-hidden"
-            >
-              <p className="text-gray-600 my-4">{module.description}</p>
-              
-              <ul className="space-y-2 my-6">
-                {module.features.map((feature: string, i: number) => (
-                  <motion.li
-                    key={i}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.4, delay: 0.1 + (i * 0.1) }}
-                    className="flex items-start"
-                  >
-                    <span className="text-primary mr-2 mt-1">
-                      <HiSparkles className="w-4 h-4" />
-                    </span>
-                    <span>{feature}</span>
-                  </motion.li>
-                ))}
-              </ul>
-              
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="inline-flex items-center bg-gradient-to-r from-primary to-secondary text-white px-5 py-2 rounded-lg font-medium hover:shadow-lg transition-all duration-300"
-              >
-                <span>Detaylı Bilgi</span>
-                <HiOutlineArrowNarrowRight className="ml-2" />
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-      
-      {/* 3D efekti için dekoratif öğeler */}
-      <motion.div 
-        className="absolute bottom-4 right-4 w-16 h-16 rounded-full bg-gradient-to-r from-primary/10 to-secondary/10" 
-        style={{ transform: 'translateZ(10px)' }}
-        animate={{ 
-          scale: isActive ? [1, 1.2, 1] : 1,
-          opacity: isActive ? [0.3, 0.6, 0.3] : 0.3,
-        }}
-        transition={{ 
-          duration: 4, 
-          repeat: isActive ? Infinity : 0,
-          repeatType: 'reverse'
-        }}
-      />
-      <motion.div 
-        className="absolute top-10 right-10 w-8 h-8 rounded-full bg-primary/10" 
-        style={{ transform: 'translateZ(20px)' }}
-        animate={{ 
-          y: isActive ? [0, -10, 0] : 0,
-          opacity: isActive ? [0.2, 0.5, 0.2] : 0.2,
-        }}
-        transition={{ 
-          duration: 3, 
-          repeat: isActive ? Infinity : 0,
-          repeatType: 'reverse'
-        }}
-      />
-    </motion.div>
-  );
-};
-
-// Parallax Layer - Katmanlı Parallax Efekti İçin
-const ParallaxLayer = ({ depth, children, className = "" }: { 
-  depth: number, 
-  children: ReactNode,
-  className?: string
-}) => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      const { innerWidth, innerHeight } = window;
-      setMousePosition({
-        x: (e.clientX - innerWidth / 2) / innerWidth,
-        y: (e.clientY - innerHeight / 2) / innerHeight
-      });
-    };
-    
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
-  
-  return (
-    <div 
-      className={`absolute inset-0 will-change-transform ${className}`}
+      onClick={handleClick}
+      className={`relative w-full p-5 rounded-2xl bg-white/10 backdrop-blur-md cursor-pointer border-2 transition-all duration-300 mb-4 overflow-hidden ${
+        isSelected ? 'border-primary shadow-lg' : 'border-white/10 hover:border-white/20'
+      }`}
       style={{ 
-        transform: `translate3d(${mousePosition.x * depth * 50}px, ${mousePosition.y * depth * 50}px, 0)`,
-        transition: 'transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+        willChange: 'transform'
+      }}
+      initial={false}
+      animate={{ 
+        height: isSelected ? 'auto' : '100px' 
+      }}
+      whileHover={{ scale: isSelected ? 1 : 1.02 }}
+      transition={{ 
+        type: 'spring', 
+        stiffness: 300, 
+        damping: 30,
+        height: { duration: 0.2 }
       }}
     >
-      {children}
-    </div>
-  );
-};
+      <div className="flex items-center gap-4">
+        <div 
+          className={`flex items-center justify-center w-10 h-10 rounded-full ${
+            isSelected ? 'bg-primary text-white' : 'bg-white/20 text-white'
+          }`}
+        >
+          {module.icon}
+        </div>
+        <div>
+          <h3 className="text-lg font-bold text-white">
+            {module.title}
+          </h3>
+          <p className="text-white/60 text-sm">
+            {module.description}
+          </p>
+        </div>
+      </div>
 
+      {isSelected && (
+        <motion.div
+          className="mt-6 space-y-4 text-white/80"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.2 }}
+        >
+          <ul className="space-y-3">
+            {module.features.map((feature, idx) => (
+              <li key={idx} className="flex items-start gap-2">
+                <span className="mt-1 text-primary">
+                  <HiCheck className="w-4 h-4" />
+                </span>
+                <span>{feature}</span>
+              </li>
+            ))}
+          </ul>
+        </motion.div>
+      )}
+    </motion.div>
+  );
+});
+
+// displayName ekleyerek geliştirme araçlarında tanımlayıcı isim olmasını sağlıyoruz
+ModuleCard.displayName = 'ModuleCard';
+
+// Ana Komponent
 const FeatureGrid = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"]
-  });
-  
   const [activeModuleId, setActiveModuleId] = useState<string | null>(null);
-  
-  // Modüller ve özellikleri
-  const modules: ModuleType[] = [
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: containerRef });
+
+  // Modül veri seti
+  const modules: Module[] = [
     {
-      id: 'hr',
+      id: 'ik',
       icon: <HiUserGroup className="w-8 h-8 text-primary" />,
-      title: 'İnsan Kaynakları',
-      description: 'Çalışan yaşam döngüsünün dijital merkezi.',
+      title: 'İK & People Analytics',
+      description: 'İnsan yönetimi güçlendirme.',
       features: [
-        'AI destekli işe alım ve aday değerlendirme',
-        'Dijital onboarding ve oryantasyon süreçleri',
-        'Personel özlük ve bordro yönetimi (SAP entegre)',
-        'İzin yönetimi ve takvim entegrasyonu',
-        'Performans değerlendirme ve 360° geri bildirim'
+        'Çalışan veri analizi ve segmentasyonu',
+        'Performans yönetimi ve OKR takibi',
+        'Çalışan geri bildirim platformu',
+        'Yetenek yönetimi ve kariyer haritaları',
+        'Gerçek zamanlı anket ve nabız yoklamaları'
+      ]
+    },
+    {
+      id: 'crm',
+      icon: <HiOfficeBuilding className="w-8 h-8 text-primary" />,
+      title: 'CRM & Satış',
+      description: 'Müşteri ilişkilerini güçlendirin.',
+      features: [
+        'Müşteri segmentasyonu ve 360° görünüm',
+        'Satış pipeline yönetimi',
+        'Fırsat skorlama ve tahminleme',
+        'Müşteri etkileşim analizi',
+        'Eksiksiz müşteri yolculuk haritası'
+      ]
+    },
+    {
+      id: 'emlak',
+      icon: <HiHome className="w-8 h-8 text-primary" />,
+      title: 'Emlak & Konut',
+      description: 'Gayrimenkul değerlendirme ve analiz.',
+      features: [
+        'Piyasa değeri tahminleme',
+        'Bölgesel fiyat analizi',
+        'Portföy optimizasyonu',
+        'Yatırım getiri hesaplaması',
+        'Talep-arz dengesi görselleştirme'
       ]
     },
     {
       id: 'finans',
       icon: <HiCurrencyDollar className="w-8 h-8 text-primary" />,
-      title: 'Finans & Mali İşler',
-      description: 'Finansal süreçlerde şeffaflık ve otomasyon.',
+      title: 'Finans & Bankacılık',
+      description: 'Finansal analiz ve raporlama.',
       features: [
-        'Mobil masraf yönetimi ve OCR destekli fiş tarama',
-        'Dijital avans talep ve kapatma işlemleri',
-        'Fatura onay akışları ve SAP entegrasyonu',
-        'Departman bazlı bütçe takibi ve analizi',
-        'Finansal raporlama ve dashboardlar'
+        'Risk değerlendirme ve skorlama',
+        'Müşteri davranış analizi',
+        'Ödeme davranışları tahmini',
+        'Sahtecilik tespiti',
+        'Portföy optimizasyonu'
       ]
     },
     {
-      id: 'idari',
-      icon: <HiOfficeBuilding className="w-8 h-8 text-primary" />,
-      title: 'İdari İşler',
-      description: 'Operasyonel süreçlerin dijitalleşmesi.',
-      features: [
-        'Toplantı odası ve kaynak rezervasyonu',
-        'Ofis malzemesi ve teknik destek talepleri',
-        'Dijital ziyaretçi yönetimi',
-        'Araç filosu ve ulaşım talep yönetimi',
-        'Yemekhane menü ve sipariş sistemi'
-      ]
-    },
-    {
-      id: 'lojistik',
-      icon: <HiShoppingBag className="w-8 h-8 text-primary" />,
-      title: 'Lojistik',
-      description: 'İç lojistik ve stok görünürlüğü.',
-      features: [
-        'Departmanlar arası gönderi takibi',
-        'Stok seviyesi izleme ve talep yönetimi',
-        'Pazarlama malzemeleri envanteri',
-        'Sevkiyat planlaması ve izleme',
-        'Tedarikçi performans değerlendirmesi'
-      ]
-    },
-    {
-      id: 'it',
-      icon: <HiDesktopComputer className="w-8 h-8 text-primary" />,
-      title: 'BT Destek',
-      description: 'Merkezi BT destek yönetimi.',
-      features: [
-        'Ticket oluşturma ve takip sistemi',
-        'AI destekli bilgi bankası ve çözüm merkezi',
-        'BT envanteri ve zimmet yönetimi',
-        'Planlı kesinti ve bakım bildirimleri',
-        'Self servis çözüm merkezi'
-      ]
-    },
-    {
-      id: 'satis',
-      icon: <HiChartBar className="w-8 h-8 text-primary" />,
-      title: 'Satış & Pazarlama',
-      description: 'Satış ve pazarlama etkinliği artırma.',
-      features: [
-        'Merkezi dijital varlık yönetimi',
-        'Kampanya takvimi ve görev atama',
-        'Lead ve fırsat yönetimi (CRM entegrasyonu)',
-        'Pazar ve rakip analizi raporları',
-        'Etkinlik ve fuar yönetimi'
-      ]
-    },
-    {
-      id: 'ar-ge',
-      icon: <HiLightBulb className="w-8 h-8 text-primary" />,
-      title: 'Ar-Ge & Proje Yönetimi',
-      description: 'İnovasyon ve proje yönetimi merkezi.',
-      features: [
-        'Fikir toplama ve değerlendirme platformu',
-        'Proje yönetimi ve Gantt şemaları',
-        'İnteraktif Kanban panoları',
-        'Risk ve sorun takibi',
-        'Proje performans dashboardları'
-      ]
-    },
-    {
-      id: 'surdurulebilirlik',
-      icon: <RiRecycleLine className="w-8 h-8 text-primary" />,
-      title: 'Sürdürülebilirlik',
-      description: 'ESG performansı ve çalışan katılımı.',
-      features: [
-        'ESG hedefleri ve performans takibi',
-        'KSS ve gönüllülük projeleri platformu',
-        'Çalışan öneri sistemi',
-        'Sürdürülebilirlik eğitim materyalleri',
-        'Karbon ayak izi hesaplama araçları'
-      ]
-    },
-    {
-      id: 'akademi',
+      id: 'egitim',
       icon: <HiAcademicCap className="w-8 h-8 text-primary" />,
-      title: 'Kurumsal Akademi',
-      description: 'Kurumsal hafıza ve sürekli öğrenme.',
+      title: 'Eğitim',
+      description: 'Öğrenme deneyimini özelleştirin.',
       features: [
-        'Merkezi bilgi bankası ve dokümantasyon',
-        'AI destekli akıllı arama',
-        'Öğrenme yolları ve mikro eğitimler',
-        'Bilgi paylaşım forumları',
-        'İçerik kullanım analitiği'
+        'Öğrenci başarı tahmini',
+        'Kişiselleştirilmiş öğrenme yolları',
+        'Eğitim içeriği optimizasyonu',
+        'Öğrenme analitikleri',
+        'Katılım ve motivasyon ölçümleri'
       ]
     },
     {
-      id: 'wellness',
-      icon: <HiHeart className="w-8 h-8 text-primary" />,
-      title: 'Sağlık & İyi Olma Hali',
-      description: 'Bütünsel çalışan sağlığı desteği.',
+      id: 'eticaret',
+      icon: <HiShoppingBag className="w-8 h-8 text-primary" />,
+      title: 'E-Ticaret & Perakende',
+      description: 'Satışları artırın, müşterileri tanıyın.',
       features: [
-        'Wellness içerik kütüphanesi',
-        'Etkinlik ve program katılım platformu',
-        'Kişisel sağlık risk değerlendirmeleri',
-        'Randevu ve destek sistemleri',
-        'İlgi grupları ve topluluk oluşturma'
+        'Ürün öneri motoru',
+        'Müşteri segmentasyonu',
+        'Fiyat optimizasyonu',
+        'Sepet analizi',
+        'Müşteri yaşam boyu değeri hesaplama'
       ]
-    }
+    },
+    {
+      id: 'medya',
+      icon: <HiDesktopComputer className="w-8 h-8 text-primary" />,
+      title: 'Medya & İçerik',
+      description: 'İçerik stratejinizi geliştirin.',
+      features: [
+        'İçerik performans analizi',
+        'Kullanıcı ilgi alanları haritalama',
+        'İçerik önerileri',
+        'Kullanıcı etkileşim tahmini',
+        'Trend tahminleme'
+      ]
+    },
+    {
+      id: 'uretim',
+      icon: <RiRecycleLine className="w-8 h-8 text-primary" />,
+      title: 'Üretim & Tedarik Zinciri',
+      description: 'Operasyonları optimize edin.',
+      features: [
+        'Talep tahmini ve planlama',
+        'Stok optimizasyonu',
+        'Bakım öngörüsü',
+        'Kalite kontrol otomasyonu',
+        'Tedarik zinciri görünürlüğü'
+      ]
+    },
+    {
+      id: 'pazarlama',
+      icon: <HiChatAlt className="w-8 h-8 text-primary" />,
+      title: 'Pazarlama & Müşteri Deneyimi',
+      description: 'Kampanyaları optimize edin.',
+      features: [
+        'Kampanya performans tahmini',
+        'Kitle segmentasyonu',
+        'Kanal optimizasyonu',
+        'İletişim zamanlaması',
+        'Müşteri yolculuk analizi'
+      ]
+    },
+    {
+      id: 'saglik',
+      icon: <HiHeart className="w-8 h-8 text-primary" />,
+      title: 'Sağlık & Yaşam Bilimleri',
+      description: 'Sağlık verilerini analiz edin.',
+      features: [
+        'Hasta sonuç tahmini',
+        'Tedavi planı optimizasyonu',
+        'Hastalık risk değerlendirmesi',
+        'İlaç etkileşim analizi',
+        'Kaynak tahsisi ve planlama'
+      ]
+    },
+    {
+      id: 'inovasyon',
+      icon: <HiLightBulb className="w-8 h-8 text-primary" />,
+      title: 'Ar-Ge & İnovasyon',
+      description: 'Yenilikçi ürünler geliştirin.',
+      features: [
+        'Fikir yönetimi ve analizi',
+        'Trend ve pazar fırsatları tespiti',
+        'Proje başarı olasılığı tahmini',
+        'Patent ve IP analizi',
+        'İnovasyon portföy yönetimi'
+      ]
+    },
+    {
+      id: 'analitik',
+      icon: <HiChartBar className="w-8 h-8 text-primary" />,
+      title: 'İş Analitiği & Raporlama',
+      description: 'Veri odaklı kararlar alın.',
+      features: [
+        'Özelleştirilebilir KPI dashboardları',
+        'Otomatik rapor oluşturma',
+        'Veri görselleştirme',
+        'Çok boyutlu analiz',
+        'Performans tahminleme'
+      ]
+    },
   ];
   
-  // Parallax efektleri için değerler
-  const titleY = useTransform(scrollYProgress, [0, 0.1], [0, -100]);
-  const subtitleOpacity = useTransform(scrollYProgress, [0, 0.1], [1, 0]);
-  const contentOpacity = useTransform(scrollYProgress, [0.05, 0.15], [0, 1]);
-  const contentY = useTransform(scrollYProgress, [0.05, 0.2], [100, 0]);
+  // Parallax efektleri için değerler - önceden yükleme için düzeltildi
+  const titleY = useTransform(scrollYProgress, [0, 0.1], [0, -50]);
+  const subtitleOpacity = useTransform(scrollYProgress, [0, 0.1], [1, 0.5]);
   
-  // Scroll animasyonu için GSAP
+  // Performans optimizasyonu: Daha erken yükleme için değerler güncellendi
+  const contentOpacity = useTransform(scrollYProgress, [0.01, 0.08], [0, 1]);
+  const contentY = useTransform(scrollYProgress, [0.01, 0.08], [50, 0]);
+  
+  // Scroll animasyonu için GSAP - daha hızlı yüklenecek şekilde optimize edildi
   useEffect(() => {
     if (!containerRef.current) return;
     
-    gsap.to(".feature-grid-item", {
-      y: 0,
-      opacity: 1,
-      stagger: 0.05,
-      scrollTrigger: {
-        trigger: ".feature-grid",
-        start: "top 70%",
-        end: "top 20%",
-        scrub: 1,
-      },
+    const animElements = gsap.utils.toArray(".feature-grid-item");
+    const footerElements = gsap.utils.toArray(".feature-footer");
+    
+    if (animElements.length === 0) return;
+    
+    // Performans optimizasyonu için Observer kullanıyoruz
+    const observerOptions = {
+      root: null,
+      rootMargin: "0px 0px 100px 0px", // Görünmeden 100px önce yukarıda yükleme yapacak
+      threshold: 0.1
+    };
+    
+    // İçerikleri daha erken yüklemek için IntersectionObserver kullanımı
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // Yeni GSAP timeline'ı her element için oluşturuyoruz
+          const item = entry.target;
+          gsap.to(item as Element, {
+            y: 0,
+            opacity: 1,
+            duration: 0.15,
+            clearProps: "all",
+            onComplete: () => observer.unobserve(item)
+          });
+        }
+      });
+    }, observerOptions);
+    
+    // Her grid item'ı gözlemlemek için
+    animElements.forEach(item => {
+      gsap.set(item as Element, { y: 20, opacity: 0 });
+      observer.observe(item as Element);
     });
     
+    // Batch animasyon işlemi için - daha verimli ve erken tetiklenen
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".feature-grid",
+        start: "top bottom-=100", // Viewport'un altından 100px önce başlatıyoruz
+        once: true,
+      }
+    });
+    
+    // Footer için scroll trigger
+    if (footerElements.length > 0) {
+      gsap.fromTo(footerElements, 
+        { y: 20, opacity: 0 },
+        { 
+          y: 0, 
+          opacity: 1, 
+          duration: 0.2,
+          stagger: 0.01,
+          scrollTrigger: {
+            trigger: ".py-20.bg-white\\/50",
+            start: "top bottom-=150", // Footer daha erken yüklenecek
+            once: true
+          }
+        }
+      );
+    }
+    
     return () => {
+      // Temizleme işlemleri
+      observer.disconnect();
       ScrollTrigger.getAll().forEach(t => t.kill());
     };
   }, []);
   
   return (
-    <div ref={containerRef} className="relative min-h-screen overflow-hidden">
-      {/* Futuristik Arka Plan */}
-      <div className="absolute inset-0 z-0 overflow-hidden bg-gradient-to-b from-white to-primary-50">
-        {/* Grid Arka Planı */}
-        <div className="absolute inset-0 bg-grid-primary/10 opacity-30" />
-        
-        {/* Dekoratif Öğeler */}
-        <ParallaxLayer depth={0.1} className="pointer-events-none">
-          <div className="absolute top-20 right-[10%] w-96 h-96 rounded-full bg-primary/5 blur-3xl"></div>
-          <div className="absolute bottom-40 left-[5%] w-80 h-80 rounded-full bg-secondary/5 blur-3xl"></div>
-          <motion.div 
-            className="absolute top-[40%] right-[30%] w-60 h-60 rounded-full border border-primary/10"
-            animate={{ 
-              rotate: 360,
-              scale: [1, 1.05, 1]
-            }}
-            transition={{ 
-              rotate: { duration: 40, repeat: Infinity, ease: "linear" },
-              scale: { duration: 8, repeat: Infinity, ease: "easeInOut" }
-            }}
-          />
-        </ParallaxLayer>
-        
-        <ParallaxLayer depth={0.2} className="pointer-events-none">
-          <motion.div 
-            className="absolute bottom-[10%] right-[20%] w-80 h-80 rounded-full border border-secondary/10"
-            animate={{ 
-              rotate: -360,
-              scale: [1.05, 0.95, 1.05]
-            }}
-            transition={{ 
-              rotate: { duration: 50, repeat: Infinity, ease: "linear" },
-              scale: { duration: 10, repeat: Infinity, ease: "easeInOut" }
-            }}
-          />
-          <div className="absolute top-[30%] left-[15%] w-40 h-40 rounded-full bg-secondary/10 blur-xl"></div>
-        </ParallaxLayer>
-        
-        <ParallaxLayer depth={0.3} className="pointer-events-none">
-          {/* Işık Efektleri */}
-          {[...Array(10)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute rounded-full bg-white"
-              style={{
-                width: Math.random() * 4 + 1,
-                height: Math.random() * 4 + 1,
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                boxShadow: "0 0 20px 2px rgba(255, 255, 255, 0.4)"
-              }}
-              animate={{
-                opacity: [0.2, 0.8, 0.2],
-                scale: [1, 1.5, 1],
-              }}
-              transition={{
-                duration: Math.random() * 3 + 2,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: Math.random() * 2
-              }}
-            />
-          ))}
-        </ParallaxLayer>
+    <div ref={containerRef} className="relative min-h-screen">
+      {/* Basitleştirilmiş Arka Plan */}
+      <div className="absolute inset-0 z-0 bg-gradient-to-b from-white to-primary-50">
+        {/* Grid Arka Planı - basitleştirildi */}
+        <div className="absolute inset-0 bg-grid-primary/10 opacity-20" />
       </div>
       
-      {/* Ana İçerik */}
+      {/* Ana İçerik - daha hızlı animasyonlarla */}
       <div className="relative z-10">
-        {/* Hero Başlık */}
+        {/* Hero Başlık - animasyonlar hızlandırıldı */}
         <motion.div 
           className="h-screen flex flex-col items-center justify-center text-center px-4"
           style={{ y: titleY }}
         >
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
+            transition={{ duration: 0.3 }}
             className="inline-block mb-6"
           >
             <span className="inline-flex items-center rounded-full bg-white/30 backdrop-blur-md px-6 py-2 text-lg font-medium text-primary border border-primary/20 shadow-lg shadow-primary/10">
               <span className="mr-2 bg-primary rounded-full p-1 flex items-center justify-center">
-                <motion.div 
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                  className="w-4 h-4 text-white"
-                >
-                  <HiSparkles className="w-4 h-4" />
-                </motion.div>
+                <HiSparkles className="w-4 h-4 text-white" />
               </span>
               Çalışan Deneyimi Platformu
             </span>
           </motion.div>
           
           <motion.h1
-            initial={{ opacity: 0, y: -50 }}
+            initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.3 }}
             className="text-5xl md:text-7xl font-bold mb-6"
           >
             <span className="block">H-AR XaPP</span>
@@ -498,21 +416,16 @@ const FeatureGrid = () => {
           </motion.p>
           
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
+            transition={{ duration: 0.3 }}
             className="flex flex-wrap justify-center gap-6"
           >
             <Link href="/demo-talep" className="group relative overflow-hidden inline-block">
               <div className="absolute inset-0 bg-gradient-to-r from-primary to-secondary opacity-90 rounded-lg"></div>
               <div className="relative z-10 px-10 py-4 rounded-lg flex items-center text-white font-medium">
                 <span className="mr-2">Demo Talep Et</span>
-                <motion.div
-                  animate={{ x: [0, 5, 0] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                >
-                  <HiOutlineArrowNarrowRight className="text-white text-xl" />
-                </motion.div>
+                <HiOutlineArrowNarrowRight className="text-white text-xl" />
               </div>
             </Link>
           </motion.div>
@@ -520,25 +433,25 @@ const FeatureGrid = () => {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 1.5 }}
+            transition={{ duration: 0.5 }}
             className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
           >
-            <motion.div
-              animate={{ y: [0, 10, 0] }}
-              transition={{ repeat: Infinity, duration: 1.5 }}
-              className="text-primary"
-            >
-              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-              </svg>
-            </motion.div>
+            <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
           </motion.div>
         </motion.div>
         
-        {/* Modüller Bölümü */}
+        {/* Modüller Bölümü - hızlı yükleme için optimize edildi */}
         <motion.div 
           className="min-h-screen py-20"
-          style={{ opacity: contentOpacity, y: contentY }}
+          style={{ 
+            opacity: contentOpacity,
+            y: contentY,
+          }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
         >
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto text-center mb-16">
@@ -552,7 +465,7 @@ const FeatureGrid = () => {
             
             <div className="feature-grid grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {modules.map((module, index) => (
-                <div key={module.id} className="feature-grid-item opacity-0 translate-y-10">
+                <div key={module.id} className="feature-grid-item">
                   <ModuleCard 
                     module={module} 
                     index={index} 
@@ -565,10 +478,10 @@ const FeatureGrid = () => {
           </div>
         </motion.div>
         
-        {/* Öne Çıkan Özellikler */}
+        {/* Öne Çıkan Özellikler - hızlı yükleme için optimize edildi */}
         <div className="py-20 bg-white/50 backdrop-blur-sm">
           <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto text-center mb-16">
+            <div className="max-w-4xl mx-auto text-center mb-16 feature-footer">
               <h2 className="text-3xl font-bold mb-6">Öne Çıkan Özellikler</h2>
               <p className="text-lg text-slate-700">
                 H-AR XaPP&apos;in sunduğu premium özelliklerden faydalanın.
@@ -619,66 +532,28 @@ const FeatureGrid = () => {
                   description: 'İş zekası ve detaylı raporlama yetenekleri.'
                 }
               ].map((feature, index) => (
-                <motion.div
+                <div
                   key={index}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  viewport={{ once: true, amount: 0.3 }}
-                  className="bg-white/80 backdrop-blur-md rounded-xl p-6 shadow-lg border border-primary-50"
+                  className="bg-white/80 backdrop-blur-md rounded-xl p-6 shadow-lg border border-primary-50 feature-footer"
                 >
                   <div className="bg-gradient-to-br from-primary/10 to-secondary/10 rounded-full p-4 inline-flex mb-4">
                     {feature.icon}
                   </div>
                   <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
                   <p className="text-slate-600">{feature.description}</p>
-                </motion.div>
+                </div>
               ))}
             </div>
             
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-              className="text-center mt-20"
-            >
+            <div className="text-center mt-20 feature-footer">
               <Link
                 href="/demo-talep"
-                className="relative inline-flex group px-8 py-4 bg-gradient-to-r from-primary to-secondary text-white rounded-lg font-bold text-lg hover:shadow-xl transition-all duration-300"
+                className="px-8 py-4 bg-gradient-to-r from-primary to-secondary text-white rounded-lg font-bold text-lg transition-all duration-300 hover:shadow-lg flex items-center justify-center inline-flex gap-2"
               >
-                <span className="relative z-10 flex items-center">
-                  <span className="mr-2">Ücretsiz Demo İsteyin</span>
-                  <motion.div
-                    animate={{ x: [0, 5, 0] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                  >
-                    <HiOutlineArrowNarrowRight className="text-white text-xl" />
-                  </motion.div>
-                </span>
-                <div className="absolute top-0 left-0 w-full h-full rounded-lg opacity-0 group-hover:opacity-100 overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-r from-secondary to-primary"></div>
-                  <div className="absolute inset-0 flex">
-                    {[...Array(5)].map((_, i) => (
-                      <motion.div
-                        key={i}
-                        className="w-[20%] h-full bg-white/20"
-                        animate={{ 
-                          x: ['-100%', '500%'],
-                          opacity: [0, 0.5, 0]
-                        }}
-                        transition={{ 
-                          duration: 2,
-                          delay: i * 0.2,
-                          repeat: Infinity,
-                          repeatDelay: 0.5
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
+                <span>Ücretsiz Demo İsteyin</span>
+                <HiOutlineArrowNarrowRight className="text-white text-xl" />
               </Link>
-            </motion.div>
+            </div>
           </div>
         </div>
       </div>

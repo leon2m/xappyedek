@@ -3,11 +3,18 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import Header from '@/components/ui/Header';
 import Footer from '@/components/ui/Footer';
+import LoadingBar from '@/components/ui/LoadingBar';
+import PageTransition from '@/components/ui/PageTransition';
+import FullScreenLoader from '@/components/ui/FullScreenLoader';
+import ScrollToTop from '@/components/ui/ScrollToTop';
+import Script from 'next/script';
+import NotFoundCheck from '@/components/ui/NotFoundCheck';
 
 const inter = Inter({ 
   subsets: ['latin'],
   display: 'swap', // Font optimizasyonu
   variable: '--font-inter',
+  preload: true,  // Performans için preload
 });
 
 export const metadata: Metadata = {
@@ -23,40 +30,140 @@ export default function RootLayout({
 }) {
   return (
     <html lang="tr" className="scroll-smooth">
-      <body className={`${inter.className} smooth-scroll antialiased bg-white text-slate-900`}>
-        <div className="flex flex-col min-h-screen">
-        <Header />
-          <main className="flex-grow">
-          {children}
-        </main>
-        <Footer />
-        </div>
+      <head>
+        {/* Performans için kritik CSS ve preload */}
+        <link 
+          rel="preload" 
+          href="/fonts/inter-var.woff2" 
+          as="font" 
+          type="font/woff2" 
+          crossOrigin="anonymous" 
+        />
+        <link 
+          rel="preconnect" 
+          href="https://fonts.googleapis.com" 
+        />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+        <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
+      </head>
+      <body className={`${inter.className} smooth-scroll antialiased bg-white text-slate-900 overflow-x-hidden will-change-scroll backface-hidden`}>
+        {/* Tam ekran yükleme animasyonu */}
+        <FullScreenLoader />
         
-        {/* Preloader */}
-        <script dangerouslySetInnerHTML={{
-          __html: `
-            document.addEventListener('DOMContentLoaded', () => {
-              document.body.classList.add('loaded');
-              
-              // Sayfa içi link yumuşak kaydırma
-              document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                  e.preventDefault();
-                  const targetId = this.getAttribute('href');
-                  if (targetId === '#') return;
+        {/* Sayfa yükleme çubuğu - sayfalar arası geçişler için */}
+        <LoadingBar />
+        
+        {/* Yukarı çık widget butonu - görünen viewport'un sağ alt köşesinde */}
+        <ScrollToTop />
+        
+        {/* Client component ile 404 kontrolü yapıyoruz */}
+        <NotFoundCheck>
+          {children}
+        </NotFoundCheck>
+        
+        {/* Early-load script for faster initialization */}
+        <Script
+          id="initialization-script"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              // Sayfa yükleme izleme
+              (function() {
+                window.isFirstVisit = !sessionStorage.getItem('visited');
+                if (!sessionStorage.getItem('visited')) {
+                  sessionStorage.setItem('visited', 'true');
+                }
+              })();
+            `
+          }}
+        />
+        
+        {/* Performance script - Kritik CSS ve JS'in hızlı yüklenmesi */}
+        <Script
+          id="performance-script"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              // Kritik kaynakları hızlandır
+              (function() {
+                // requestIdleCallback polyfill
+                window.requestIdleCallback = window.requestIdleCallback || 
+                  function(cb) {
+                    const start = Date.now();
+                    return setTimeout(function() {
+                      cb({
+                        didTimeout: false,
+                        timeRemaining: function() {
+                          return Math.max(0, 50 - (Date.now() - start));
+                        }
+                      });
+                    }, 1);
+                  };
                   
-                  const targetElement = document.querySelector(targetId);
-                  if (!targetElement) return;
-                  
-                  window.scrollTo({
-                    top: targetElement.offsetTop - 80, // Header yüksekliği için offset
-                    behavior: 'smooth'
+                // Preload stratejisi
+                const preloadLinks = Array.from(document.querySelectorAll('link[rel="preload"]'));
+                if (preloadLinks.length > 0) {
+                  requestIdleCallback(() => {
+                    preloadLinks.forEach(link => {
+                      link.setAttribute('rel', 'stylesheet');
+                    });
                   });
+                }
+                
+                // DOM yüklendi eventi
+                const markLoaded = () => {
+                  document.body.classList.add('loaded');
+                  
+                  // Ana içeriği göster - body'nin opacity'sini düzelt
+                  setTimeout(() => {
+                    const mainContainer = document.querySelector('.flex-col.min-h-screen');
+                    if (mainContainer) {
+                      mainContainer.classList.add('animate-fade-in');
+                    }
+                  }, 100);
+                  
+                  // Sayfa içi link yumuşak kaydırma
+                  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                    anchor.addEventListener('click', function (e) {
+                      e.preventDefault();
+                      const targetId = this.getAttribute('href');
+                      if (targetId === '#') return;
+                      
+                      const targetElement = document.querySelector(targetId);
+                      if (!targetElement) return;
+                      
+                      window.scrollTo({
+                        top: targetElement.getBoundingClientRect().top + window.scrollY - 80,
+                        behavior: 'smooth'
+                      });
+                    });
+                  });
+                };
+                
+                if (document.readyState === 'complete') {
+                  markLoaded();
+                } else {
+                  window.addEventListener('load', markLoaded);
+                }
+                
+                // Optimize edilmiş sayfa görüntüleme izleme
+                let lastPath = window.location.pathname;
+                const observer = new MutationObserver(() => {
+                  const currentPath = window.location.pathname;
+                  if (currentPath !== lastPath) {
+                    lastPath = currentPath;
+                    // URL değişikliği - burada sayfa geçiş analitikleri olabilir
+                  }
                 });
-              });
-            });
-          `
-        }} />
+                
+                observer.observe(document.documentElement, {
+                  childList: true,
+                  subtree: true
+                });
+              })();
+            `
+          }}
+        />
       </body>
     </html>
   );
