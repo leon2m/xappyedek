@@ -2,143 +2,55 @@
 
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import confetti from 'canvas-confetti';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 
-const confetti = () => {
-  // Konfeti oluşturma fonksiyonu
-  if (typeof window !== 'undefined') {
-    const canvas = document.createElement('canvas');
-    canvas.style.position = 'fixed';
-    canvas.style.inset = '0';
-    canvas.style.width = '100vw';
-    canvas.style.height = '100vh';
-    canvas.style.zIndex = '-1';
-    canvas.style.pointerEvents = 'none';
-    document.body.appendChild(canvas);
-    
-    const context = canvas.getContext('2d');
-    if (!context) return { stop: () => {} };
-    
-    let width = window.innerWidth;
-    let height = window.innerHeight;
-    
-    const particles: {
-      x: number;
-      y: number;
-      r: number;
-      d: number;
-      color: string;
-      tilt: number;
-      tiltAngleIncrement: number;
-      tiltAngle: number;
-    }[] = [];
-    
-    const colors = [
-      '#419639', '#9fcf67', '#2a5c23', '#d6efc7',
-      '#ffffff', '#ffffff', '#d6efc7'
-    ];
-    
-    const resizeCanvas = () => {
-      width = window.innerWidth;
-      height = window.innerHeight;
-      canvas.width = width;
-      canvas.height = height;
-    };
-    
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-    
-    const createParticle = (x: number, y: number) => {
-      const color = colors[Math.floor(Math.random() * colors.length)];
-      const size = Math.random() * 10 + 5;
-      particles.push({
-        x,
-        y,
-        r: size,
-        d: Math.random() * 10 + 10, // Density for falling speed
-        color,
-        tilt: Math.random() * 10 - 10,
-        tiltAngleIncrement: Math.random() * 0.07 + 0.05,
-        tiltAngle: 0,
-      });
-    };
-    
-    // Create initial particles
-    for (let i = 0; i < 150; i++) {
-      createParticle(
-        Math.random() * width,
-        Math.random() * height - height
-      );
-    }
-    
-    // Animation loop
-    let animationFrame: number;
-    
-    const animate = () => {
-      context.clearRect(0, 0, width, height);
-      
-      for (let i = 0; i < particles.length; i++) {
-        const particle = particles[i];
-        context.beginPath();
-        context.lineWidth = particle.r / 2;
-        context.strokeStyle = particle.color;
-        context.moveTo(particle.x + particle.tilt + particle.r / 4, particle.y);
-        context.lineTo(particle.x + particle.tilt, particle.y + particle.r / 2);
-        context.stroke();
-        
-        // Update position
-        particle.tiltAngle += particle.tiltAngleIncrement;
-        particle.y += (Math.cos(particle.d) + 3 + particle.r / 2) / 2;
-        particle.x += Math.sin(particle.tiltAngle) * 2;
-        particle.tilt = Math.sin(particle.tiltAngle) * 15;
-        
-        // Remove particles that are out of bounds
-        if (particle.y > height) {
-          particles.splice(i, 1);
-          i--;
-          
-          // Add a new particle
-          createParticle(
-            Math.random() * width,
-            Math.random() * -50 - 50
-          );
-        }
-      }
-      
-      animationFrame = requestAnimationFrame(animate);
-    };
-    
-    animate();
-    
-    return {
-      stop: () => {
-        cancelAnimationFrame(animationFrame);
-        window.removeEventListener('resize', resizeCanvas);
-        document.body.removeChild(canvas);
-      }
-    };
-  }
-  
-  return { stop: () => {} };
-};
+const confettiColors = ['#28a3ff', '#ff3d77', '#46cdcf', '#3f51b5'];
 
 const ThankYouPage = () => {
-  const router = useRouter();
   const [countdown, setCountdown] = useState(10);
-  
+
   useEffect(() => {
-    // Run confetti effect
-    const effect = confetti();
-    
-    // Auto redirect countdown
+    // Confetti effect
+    const duration = 5 * 1000;
+    const animationEnd = Date.now() + duration;
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+    function randomInRange(min: number, max: number): number {
+      return Math.random() * (max - min) + min;
+    }
+
+    const interval = setInterval(function() {
+      const timeLeft = animationEnd - Date.now();
+
+      if (timeLeft <= 0) {
+        return clearInterval(interval);
+      }
+
+      const particleCount = 50 * (timeLeft / duration);
+      
+      // Start confetti
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+        colors: confettiColors,
+      });
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+        colors: confettiColors,
+      });
+    }, 250);
+
+    // Countdown timer
     const timer = setInterval(() => {
-      setCountdown((prev) => {
+      setCountdown(prev => {
         if (prev <= 1) {
           clearInterval(timer);
-          setTimeout(() => {
-            router.push('/');
-          }, 1000);
+          // Use window.location for static export
+          window.location.href = '/';
           return 0;
         }
         return prev - 1;
@@ -146,82 +58,79 @@ const ThankYouPage = () => {
     }, 1000);
     
     return () => {
+      clearInterval(interval);
       clearInterval(timer);
-      effect.stop();
     };
-  }, [router]);
-  
+  }, []);
+
   return (
-    <div className="min-h-screen pt-32 pb-20 relative overflow-hidden">
+    <div className="min-h-screen pt-32 pb-20 flex items-center justify-center overflow-hidden bg-gray-50">
       <div className="container mx-auto px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ type: 'spring', stiffness: 200, damping: 15 }}
-            className="mb-12"
-          >
-            <div className="relative w-32 h-32 mx-auto">
-              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary to-secondary opacity-20 animate-pulse-slow"></div>
-              <div className="absolute inset-0 flex items-center justify-center text-primary text-7xl">✓</div>
-            </div>
-          </motion.div>
-          
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="text-4xl md:text-5xl font-bold mb-6"
-          >
-            Teşekkürler!
-          </motion.h1>
-          
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className="text-xl text-gray-600 mb-8"
-          >
-            Demo talebiniz başarıyla alındı. En kısa sürede ekibimiz sizinle iletişime geçecektir.
-          </motion.p>
-          
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.7 }}
-            className="mb-12"
-          >
-            <p className="text-gray-500">
-              Ekip olarak, H-AR XaPP&apos;ın işletmenize nasıl değer katabileceğini göstermek için sabırsızlanıyoruz.
-            </p>
-          </motion.div>
-          
+        <div className="max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.9 }}
-            className="flex flex-col md:flex-row items-center justify-center gap-4"
+            transition={{ duration: 0.6 }}
+            className="bg-white rounded-2xl shadow-md p-8 md:p-12 text-center relative overflow-hidden"
           >
-            <Link
-              href="/"
-              className="px-8 py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors"
-            >
-              Ana Sayfaya Dön ({countdown})
-            </Link>
+            {/* Decorative elements */}
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-50 z-0"></div>
+            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary to-secondary"></div>
             
-            <Link
-              href="/ozellikler"
-              className="px-8 py-3 bg-white border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
-            >
-              Özellikleri Keşfet
-            </Link>
+            <div className="relative z-10">
+              <div className="inline-block mb-8">
+                <div className="relative w-32 h-32 mx-auto">
+                  <motion.div 
+                    className="absolute inset-0 rounded-full bg-primary/10"
+                    animate={{ scale: [1, 1.5, 1] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-20 h-20 text-primary">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              
+              <h1 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                Demo Talebiniz İçin Teşekkürler!
+              </h1>
+              
+              <p className="text-xl text-gray-700 mb-6">
+                Talebiniz başarıyla alındı. Ekibimiz en kısa sürede sizinle iletişime geçecektir.
+              </p>
+              
+              <div className="max-w-3xl mx-auto mb-8">
+                <p className="text-gray-600">
+                  Demo talebiniz, ekibimiz tarafından değerlendirilecek ve özel ürün tanıtımınız için gerekli hazırlıklar yapılacaktır. 
+                  Bu süreçte herhangi bir sorunuz olursa bizimle iletişime geçebilirsiniz.
+                </p>
+              </div>
+              
+              <div className="text-gray-500 mb-8">
+                <p>{countdown} saniye içinde ana sayfaya yönlendirileceksiniz.</p>
+              </div>
+              
+              <div className="flex flex-wrap gap-4 justify-center">
+                <Link
+                  href="/"
+                  className="px-8 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-lg font-medium hover:shadow-lg transition-all"
+                >
+                  Ana Sayfaya Dön
+                </Link>
+                
+                <Link
+                  href="/ozellikler"
+                  className="px-8 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-all"
+                >
+                  Özelliklerimizi Keşfedin
+                </Link>
+              </div>
+            </div>
           </motion.div>
         </div>
       </div>
-      
-      {/* Decorative elements */}
-      <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-gradient-to-tl from-primary/10 to-secondary/5 rounded-full blur-3xl"></div>
-      <div className="absolute -top-20 -left-20 w-80 h-80 bg-gradient-to-br from-primary/5 to-secondary/10 rounded-full blur-3xl"></div>
     </div>
   );
 };

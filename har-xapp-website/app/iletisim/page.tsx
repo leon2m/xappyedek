@@ -4,8 +4,6 @@ import { useState, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import gsap from 'gsap';
-import { useGSAP } from '@gsap/react';
 import { HiMail, HiPhone, HiLocationMarker, HiClock } from 'react-icons/hi';
 
 interface FormState {
@@ -21,7 +19,7 @@ interface FormState {
 const ContactPage = () => {
   const formRef = useRef<HTMLFormElement>(null);
   const mapRef = useRef<HTMLDivElement>(null);
-  const isMapInView = useInView(mapRef, { once: false, amount: 0.3 });
+  const isMapInView = useInView(mapRef, { once: true, amount: 0.3 });
   const router = useRouter();
   
   const [formState, setFormState] = useState<FormState>({
@@ -34,48 +32,6 @@ const ContactPage = () => {
     loading: false
   });
   
-  // 3D mouse move effect
-  useGSAP(() => {
-    const form = formRef.current;
-    if (!form) return;
-    
-    const handleMouseMove = (e: MouseEvent) => {
-      const { clientX, clientY } = e;
-      const formRect = form.getBoundingClientRect();
-      
-      // Calculate distance from center
-      const formCenterX = formRect.left + formRect.width / 2;
-      const formCenterY = formRect.top + formRect.height / 2;
-      
-      const moveX = (clientX - formCenterX) / 25;
-      const moveY = (clientY - formCenterY) / 25;
-      
-      gsap.to(form, {
-        rotateY: moveX * 0.5,
-        rotateX: -moveY * 0.5,
-        transformPerspective: 1000,
-        duration: 0.5,
-        ease: "power2.out"
-      });
-    };
-    
-    const handleMouseLeave = () => {
-      gsap.to(form, {
-        rotateY: 0,
-        rotateX: 0,
-        duration: 0.5
-      });
-    };
-    
-    window.addEventListener('mousemove', handleMouseMove);
-    form.addEventListener('mouseleave', handleMouseLeave);
-    
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      form.removeEventListener('mouseleave', handleMouseLeave);
-    };
-  }, []);
-  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormState(prev => ({ ...prev, [name]: value }));
@@ -85,67 +41,23 @@ const ContactPage = () => {
     e.preventDefault();
     setFormState(prev => ({ ...prev, loading: true }));
     
-    // Static export modunda API routes çalışmaz, bu durumda simülasyon yapıyoruz
-    if (process.env.NEXT_PUBLIC_PRODUCTION === 'true' || process.env.NODE_ENV === 'production') {
-      console.log('Prodüksiyon ortamında form gönderimi simüle ediliyor');
-      console.log('Bu kısımda harici bir API ile entegrasyon yapmanız gerekiyor');
-      
-      // Demo amaçlı form verilerini console'a yaz
-      console.log('Form verileri:', {
-        name: formState.name,
-        email: formState.email,
-        phone: formState.phone,
-        subject: formState.subject,
-        message: formState.message,
-      });
-      
-      // Simüle etmek için timeout kullan
-      setTimeout(() => {
-        setFormState(prev => ({ ...prev, submitted: true, loading: false }));
-        
-        // Başarılı yanıt sonrası teşekkürler sayfasına yönlendir
-        setTimeout(() => {
-          router.push('/iletisim/tesekkurler');
-        }, 2000);
-      }, 1500);
-      
-      return;
-    }
+    // Form verilerini loglayalım (gerçek uygulamada burada API çağrısı yapılacak)
+    console.log('Form gönderildi:', {
+      name: formState.name,
+      email: formState.email,
+      phone: formState.phone,
+      subject: formState.subject,
+      message: formState.message
+    });
     
-    // Yerel geliştirme ortamında API'yi çağır
-    fetch('/api/contact', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name: formState.name,
-        email: formState.email,
-        phone: formState.phone,
-        subject: formState.subject,
-        message: formState.message,
-      }),
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Form gönderimi başarısız oldu');
-        }
-        return response.json();
-      })
-      .then(data => {
-        console.log('Form başarıyla gönderildi:', data);
-        setFormState(prev => ({ ...prev, submitted: true, loading: false }));
-        
-        // Başarılı yanıt sonrası teşekkürler sayfasına yönlendir
-        setTimeout(() => {
-          router.push('/iletisim/tesekkurler');
-        }, 2000);
-      })
-      .catch(error => {
-        console.error('Form gönderim hatası:', error);
-        setFormState(prev => ({ ...prev, loading: false }));
-        alert('Form gönderimi sırasında bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.');
-      });
+    // Static export için doğrudan teşekkürler sayfasına yönlendir
+    setTimeout(() => {
+      setFormState(prev => ({ ...prev, submitted: true, loading: false }));
+      
+      setTimeout(() => {
+        window.location.href = '/iletisim/tesekkurler';
+      }, 500); // Süreyi kısalttık
+    }, 500); // Süreyi kısalttık
   };
   
   const contactInfo = [
@@ -179,22 +91,18 @@ const ContactPage = () => {
     }
   ];
   
+  // Form gönderildiğinde teşekkür mesajı göster
   if (formState.submitted) {
     return (
-      <div className="min-h-screen pt-32 pb-20 flex items-center justify-center">
+      <div className="min-h-screen pt-32 pb-20 flex items-center justify-center bg-gray-50">
         <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
+          initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-          className="text-center"
+          transition={{ duration: 0.3 }}
+          className="text-center bg-white p-8 rounded-2xl shadow-md"
         >
           <div className="inline-block mb-6">
             <div className="relative w-24 h-24 mx-auto">
-              <motion.div 
-                className="absolute inset-0 rounded-full bg-primary/20"
-                animate={{ scale: [1, 1.5, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              />
               <div className="absolute inset-0 flex items-center justify-center text-4xl">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-12 h-12 text-primary">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
@@ -203,64 +111,49 @@ const ContactPage = () => {
             </div>
           </div>
           
-          <h2 className="text-3xl font-bold mb-4">Mesajınız Alındı!</h2>
+          <h2 className="text-3xl font-bold mb-4 text-gray-800">Mesajınız Alındı!</h2>
           <p className="text-xl text-gray-600 mb-6">
             İletişim talebiniz için teşekkür ederiz. Ekibimiz en kısa sürede sizinle iletişime geçecektir.
           </p>
+          <button 
+            onClick={() => window.location.href = '/'}
+            className="px-6 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-lg"
+          >
+            Ana Sayfaya Dön
+          </button>
         </motion.div>
       </div>
     );
   }
   
   return (
-    <div className="min-h-screen pt-32 pb-20">
+    <div className="min-h-screen pt-32 pb-20 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="max-w-7xl mx-auto">
-          {/* Başlık */}
+          {/* Başlık - Animasyonsuz veya basit animasyonlu */}
           <div className="text-center mb-16">
-            <motion.span
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="inline-block bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-4"
-            >
+            <div className="inline-block bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-4">
               Bize Ulaşın
-            </motion.span>
+            </div>
             
-            <motion.h1
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent"
-            >
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
               İletişime Geçin
-            </motion.h1>
+            </h1>
             
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-xl text-gray-600 max-w-2xl mx-auto"
-            >
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               H-AR XaPP hakkında sorularınız mı var? Bizimle iletişime geçin, en kısa sürede size dönüş yapacağız.
-            </motion.p>
+            </p>
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
             {/* İletişim Bilgileri */}
             <div className="lg:col-span-1">
-              <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+              <div className="bg-white rounded-2xl shadow-md p-8 border border-gray-100">
                 <h2 className="text-2xl font-bold mb-6 text-gray-800">İletişim Bilgilerimiz</h2>
                 
                 <div className="space-y-8">
                   {contactInfo.map((info, index) => (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.3 + index * 0.1 }}
-                      className="flex gap-4"
-                    >
+                    <div key={index} className="flex gap-4">
                       <div className="bg-primary/10 rounded-full p-3 flex-shrink-0 self-start">
                         {info.icon}
                       </div>
@@ -273,7 +166,7 @@ const ContactPage = () => {
                           </a>
                         )}
                       </div>
-                    </motion.div>
+                    </div>
                   ))}
                 </div>
                 
@@ -307,153 +200,130 @@ const ContactPage = () => {
             
             {/* İletişim Formu */}
             <div className="lg:col-span-2">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-                className="relative"
-              >
-                <div className="absolute -inset-1 bg-gradient-to-r from-primary to-secondary rounded-3xl blur-lg opacity-30"></div>
-                <div className="absolute -inset-1 bg-[conic-gradient(from_var(--shimmer-angle),theme(colors.primary.500)_0%,theme(colors.primary.100)_10%,theme(colors.secondary.300)_20%,theme(colors.primary.500)_30%)] animate-[angle_3s_linear_infinite] rounded-3xl blur opacity-25"
-                  style={{ '--shimmer-angle': '0deg' } as React.CSSProperties}
-                ></div>
-                
-                <div className="relative bg-white rounded-2xl shadow-xl overflow-hidden transform-gpu">
-                  <div className="p-8">
-                    <h2 className="text-2xl font-bold mb-6 text-gray-800">Bize Mesaj Gönderin</h2>
-                    
-                    <form ref={formRef} onSubmit={handleSubmit} className="space-y-6 transform-gpu" style={{ transformStyle: 'preserve-3d' }}>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                          <label htmlFor="name" className="block text-sm font-medium text-gray-700">İsim Soyisim</label>
-                          <input
-                            id="name"
-                            name="name"
-                            type="text"
-                            required
-                            value={formState.name}
-                            onChange={handleChange}
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
-                            placeholder="İsim Soyisim"
-                          />
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <label htmlFor="email" className="block text-sm font-medium text-gray-700">E-posta Adresi</label>
-                          <input
-                            id="email"
-                            name="email"
-                            type="email"
-                            required
-                            value={formState.email}
-                            onChange={handleChange}
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
-                            placeholder="E-posta Adresiniz"
-                          />
-                        </div>
-                      </div>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                          <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Telefon</label>
-                          <input
-                            id="phone"
-                            name="phone"
-                            type="tel"
-                            value={formState.phone}
-                            onChange={handleChange}
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
-                            placeholder="Telefon Numaranız"
-                          />
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <label htmlFor="subject" className="block text-sm font-medium text-gray-700">Konu</label>
-                          <input
-                            id="subject"
-                            name="subject"
-                            type="text"
-                            required
-                            value={formState.subject}
-                            onChange={handleChange}
-                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
-                            placeholder="Konu Başlığı"
-                          />
-                        </div>
+              <div className="bg-white rounded-2xl shadow-md overflow-hidden">
+                <div className="p-8">
+                  <h2 className="text-2xl font-bold mb-6 text-gray-800">Bize Mesaj Gönderin</h2>
+                  
+                  <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label htmlFor="name" className="block text-sm font-medium text-gray-700">İsim Soyisim</label>
+                        <input
+                          id="name"
+                          name="name"
+                          type="text"
+                          required
+                          value={formState.name}
+                          onChange={handleChange}
+                          className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+                          placeholder="İsim Soyisim"
+                        />
                       </div>
                       
                       <div className="space-y-2">
-                        <label htmlFor="message" className="block text-sm font-medium text-gray-700">Mesajınız</label>
-                        <textarea
-                          id="message"
-                          name="message"
-                          rows={5}
+                        <label htmlFor="email" className="block text-sm font-medium text-gray-700">E-posta Adresi</label>
+                        <input
+                          id="email"
+                          name="email"
+                          type="email"
                           required
-                          value={formState.message}
+                          value={formState.email}
                           onChange={handleChange}
                           className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
-                          placeholder="Bize iletmek istediğiniz mesajı yazın"
-                        ></textarea>
+                          placeholder="E-posta Adresiniz"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Telefon</label>
+                        <input
+                          id="phone"
+                          name="phone"
+                          type="tel"
+                          value={formState.phone}
+                          onChange={handleChange}
+                          className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+                          placeholder="Telefon Numaranız"
+                        />
                       </div>
                       
-                      <div className="pt-2">
-                        <p className="text-sm text-gray-500 mb-4">
-                          Bilgilerinizi göndererek, AR Solutions&apos;ın
-                          <Link href="/gizlilik-politikasi" className="text-primary hover:underline"> Gizlilik Politikasını</Link> kabul etmiş olursunuz.
-                        </p>
-                        
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          type="submit"
-                          disabled={formState.loading}
-                          className="w-full md:w-auto px-8 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-lg font-medium hover:shadow-lg transition-all relative overflow-hidden"
-                        >
-                          {formState.loading ? (
-                            <span className="flex items-center">
-                              <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                              </svg>
-                              Gönderiliyor...
-                            </span>
-                          ) : (
-                            <span>Mesaj Gönder</span>
-                          )}
-                        </motion.button>
+                      <div className="space-y-2">
+                        <label htmlFor="subject" className="block text-sm font-medium text-gray-700">Konu</label>
+                        <input
+                          id="subject"
+                          name="subject"
+                          type="text"
+                          required
+                          value={formState.subject}
+                          onChange={handleChange}
+                          className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+                          placeholder="Konu Başlığı"
+                        />
                       </div>
-                    </form>
-                  </div>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <label htmlFor="message" className="block text-sm font-medium text-gray-700">Mesajınız</label>
+                      <textarea
+                        id="message"
+                        name="message"
+                        rows={5}
+                        required
+                        value={formState.message}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent transition-colors resize-none"
+                        placeholder="Mesajınızı buraya yazın..."
+                      ></textarea>
+                    </div>
+                    
+                    <div>
+                      <button
+                        type="submit"
+                        disabled={formState.loading}
+                        className={`w-full px-6 py-3 rounded-lg text-white font-medium transition-all ${
+                          formState.loading
+                            ? 'bg-gray-400 cursor-not-allowed'
+                            : 'bg-gradient-to-r from-primary to-secondary hover:shadow-lg'
+                        }`}
+                      >
+                        {formState.loading ? (
+                          <span className="flex items-center justify-center">
+                            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Gönderiliyor...
+                          </span>
+                        ) : (
+                          'Mesajı Gönder'
+                        )}
+                      </button>
+                    </div>
+                  </form>
                 </div>
-              </motion.div>
+              </div>
             </div>
           </div>
           
-          {/* Harita */}
+          {/* Google Maps */}
           <div 
             ref={mapRef}
-            className="mt-16 w-full h-96 bg-gray-100 rounded-2xl overflow-hidden relative shadow-md"
+            className="mt-20"
           >
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={isMapInView ? { opacity: 1 } : { opacity: 0 }}
-              transition={{ duration: 0.8 }}
-              className="h-full w-full"
-            >
+            <div className={`rounded-2xl overflow-hidden border border-gray-200 shadow-md h-[400px] ${isMapInView ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500`}>
               <iframe 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3011.6801200038283!2d29.090821375687616!3d40.97741177135699!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14cac7ca17f6151d%3A0x5683bb001adaadcc!2zS296eWF0YcSfxLEsIFNhbml5ZSBFcm11dGx1IFNrLiwgMzQ3NDIgS2FkxLFrw7Z5L8Swc3RhbmJ1bA!5e0!3m2!1str!2str!4v1684243321121!5m2!1str!2str" 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3010.835787604156!2d29.100926076336237!3d41.001628124362135!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14cac7f884155555%3A0x3f1c2d577fae1b1a!2zS296eWF0YcSfxLEsIFNhbml5ZSBFcm11dGx1IFNrLiBObzo2LCAzNDc0MiBLYWTEsWvDtnkvxLBzdGFuYnVs!5e0!3m2!1str!2str!4v1684851712492!5m2!1str!2str" 
                 width="100%" 
-                height="100%" 
-                style={{ border: 0 }} 
-                allowFullScreen={false} 
-                loading="lazy"
+                height="400" 
+                style={{ border: 0 }}
+                allowFullScreen 
+                loading="lazy" 
                 referrerPolicy="no-referrer-when-downgrade"
                 title="AR Solutions Konum"
               ></iframe>
-            </motion.div>
-            
-            {/* Map overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-white/20 to-transparent pointer-events-none"></div>
+            </div>
           </div>
         </div>
       </div>

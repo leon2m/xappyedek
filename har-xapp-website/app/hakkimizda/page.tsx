@@ -376,8 +376,8 @@ export default function AboutPage() {
             
             <div className="text-center max-w-3xl mx-auto mb-12">
               <p className="text-lg text-slate-700">
-                AR Solutions olarak teknoloji ekosistemindeki en yetenekli uzmanları bir araya getiriyoruz. 
-                Farklı disiplinlerden gelen ekip üyelerimiz, H-AR XaPP'in geliştirilmesi ve sürekli iyileştirilmesi için çalışıyor.
+                AR Solutions olarak küçük ve verimli bir ekiple çalışıyoruz. 
+                H-AR XaPP'in geliştirilmesi ve müşterilerimize en iyi hizmeti sunmak için uzman yazılım ekibimizle çalışıyoruz.
               </p>
             </div>
             
@@ -385,13 +385,11 @@ export default function AboutPage() {
               {[
                 {
                   role: 'Yazılım Geliştirme',
-                  count: '12 Uzman',
+                  count: '4 Geliştirici',
                   positions: [
-                    '3 Backend Developer (Java, Python, C#)',
-                    '4 Frontend Developer (React, Next.js)',
-                    '2 Mobil Uygulama Geliştiricisi (Flutter)',
-                    '2 DevOps Mühendisi',
-                    '1 QA Uzmanı'
+                    '1 Backend Developer (Node.js)',
+                    '2 Frontend Developer (React, Next.js)',
+                    '1 Full Stack Developer'
                   ],
                   icon: (
                     <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -401,13 +399,10 @@ export default function AboutPage() {
                 },
                 {
                   role: 'Tasarım & UX Ekibi',
-                  count: '6 Uzman',
+                  count: '2 Tasarımcı',
                   positions: [
-                    '2 UX/UI Tasarımcısı',
-                    '1 Grafik Tasarımcı',
-                    '1 İçerik Tasarımcısı',
-                    '1 Kullanıcı Deneyimi Araştırmacısı',
-                    '1 İçerik Stratejisti'
+                    '1 UX/UI Tasarımcısı',
+                    '1 Grafik Tasarımcı'
                   ],
                   icon: (
                     <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -416,66 +411,14 @@ export default function AboutPage() {
                   )
                 },
                 {
-                  role: 'Modül Uzmanları',
-                  count: '9 Uzman',
+                  role: 'Proje Yönetimi',
+                  count: '1 Yönetici',
                   positions: [
-                    '3 SAP Entegrasyon Uzmanı',
-                    '2 Microsoft 365 Uzmanı',
-                    '2 İnsan Kaynakları Çözümleri Uzmanı',
-                    '1 Finans & Muhasebe Çözümleri Uzmanı',
-                    '1 Operasyon Yönetimi Uzmanı'
+                    '1 Proje Yöneticisi & İş Geliştirme'
                   ],
                   icon: (
                     <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
-                    </svg>
-                  )
-                },
-                {
-                  role: 'Siber Güvenlik & Altyapı',
-                  count: '5 Uzman',
-                  positions: [
-                    '1 Siber Güvenlik Direktörü',
-                    '2 Güvenlik Mühendisi',
-                    '1 Veri Koruma Uzmanı',
-                    '1 Cloud Mimarı'
-                  ],
-                  icon: (
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                    </svg>
-                  )
-                },
-                {
-                  role: 'Müşteri Başarısı',
-                  count: '7 Uzman',
-                  positions: [
-                    '1 Müşteri Başarı Yöneticisi',
-                    '2 Uygulama Danışmanı',
-                    '2 Teknik Destek Uzmanı',
-                    '1 Eğitim Uzmanı',
-                    '1 Müşteri İlişkileri Yöneticisi'
-                  ],
-                  icon: (
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                  )
-                },
-                {
-                  role: 'Yönetim & Strateji',
-                  count: '6 Uzman',
-                  positions: [
-                    '1 CEO & Kurucu',
-                    '1 Teknoloji Direktörü (CTO)',
-                    '1 Ürün Direktörü (CPO)',
-                    '1 Satış & Pazarlama Direktörü',
-                    '1 İş Geliştirme Yöneticisi',
-                    '1 İnsan Kaynakları Yöneticisi'
-                  ],
-                  icon: (
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                     </svg>
                   )
                 }
@@ -515,7 +458,7 @@ export default function AboutPage() {
             
             <div className="text-center mt-12">
               <p className="text-slate-600">
-                Toplam <span className="font-bold text-primary">45</span> uzman çalışanımız ile H-AR XaPP'i geliştirmeye ve müşterilerimize en iyi hizmeti sunmaya devam ediyoruz.
+                <span className="font-bold text-primary">7</span> kişilik uzman ekibimiz ile H-AR XaPP'i geliştirmeye ve müşterilerimize en iyi hizmeti sunmaya devam ediyoruz.
               </p>
             </div>
           </div>

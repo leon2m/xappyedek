@@ -10,7 +10,7 @@ import { HiOutlineArrowNarrowRight, HiUserGroup, HiCurrencyDollar, HiOfficeBuild
 import { RiRecycleLine } from 'react-icons/ri';
 import type { ReactNode } from 'react';
 
-gsap.registerPlugin(ScrollTrigger);
+  gsap.registerPlugin(ScrollTrigger);
 
 // Modül arayüzü
 interface ModuleType {
@@ -102,14 +102,14 @@ const ModuleCard = ({ module, index, activeModuleId, setActiveModuleId }: {
       >
         <div className="flex items-center">
           <div className="text-3xl p-3 rounded-xl bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
-            {module.icon}
-          </div>
-          <h3 className="text-xl font-bold ml-3">{module.title}</h3>
+          {module.icon}
         </div>
-        
+          <h3 className="text-xl font-bold ml-3">{module.title}</h3>
+      </div>
+
         <AnimatePresence>
           {isActive && (
-            <motion.div
+        <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
@@ -129,11 +129,11 @@ const ModuleCard = ({ module, index, activeModuleId, setActiveModuleId }: {
                   >
                     <span className="text-primary mr-2 mt-1">
                       <HiSparkles className="w-4 h-4" />
-                    </span>
-                    <span>{feature}</span>
+                </span>
+                <span>{feature}</span>
                   </motion.li>
-                ))}
-              </ul>
+            ))}
+          </ul>
               
               <motion.div
                 whileHover={{ scale: 1.05 }}
@@ -143,8 +143,8 @@ const ModuleCard = ({ module, index, activeModuleId, setActiveModuleId }: {
                 <span>Detaylı Bilgi</span>
                 <HiOutlineArrowNarrowRight className="ml-2" />
               </motion.div>
-            </motion.div>
-          )}
+        </motion.div>
+      )}
         </AnimatePresence>
       </div>
       
@@ -221,7 +221,7 @@ const FeatureGrid = () => {
   });
   
   const [activeModuleId, setActiveModuleId] = useState<string | null>(null);
-  
+
   // Modüller ve özellikleri
   const modules: ModuleType[] = [
     {
@@ -367,8 +367,8 @@ const FeatureGrid = () => {
     if (!containerRef.current) return;
     
     gsap.to(".feature-grid-item", {
-      y: 0,
-      opacity: 1,
+            y: 0,
+            opacity: 1,
       stagger: 0.05,
       scrollTrigger: {
         trigger: ".feature-grid",
@@ -511,7 +511,7 @@ const FeatureGrid = () => {
                   animate={{ x: [0, 5, 0] }}
                   transition={{ duration: 1.5, repeat: Infinity }}
                 >
-                  <HiOutlineArrowNarrowRight className="text-white text-xl" />
+                <HiOutlineArrowNarrowRight className="text-white text-xl" />
                 </motion.div>
               </div>
             </Link>
@@ -529,8 +529,8 @@ const FeatureGrid = () => {
               className="text-primary"
             >
               <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-              </svg>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
             </motion.div>
           </motion.div>
         </motion.div>
@@ -653,7 +653,7 @@ const FeatureGrid = () => {
                     animate={{ x: [0, 5, 0] }}
                     transition={{ duration: 1.5, repeat: Infinity }}
                   >
-                    <HiOutlineArrowNarrowRight className="text-white text-xl" />
+                <HiOutlineArrowNarrowRight className="text-white text-xl" />
                   </motion.div>
                 </span>
                 <div className="absolute top-0 left-0 w-full h-full rounded-lg opacity-0 group-hover:opacity-100 overflow-hidden">

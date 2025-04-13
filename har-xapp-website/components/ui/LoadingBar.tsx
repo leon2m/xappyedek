@@ -1,167 +1,124 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 /**
- * Doğa temalı yükleme çubuğu
- * Yaprak ve dal animasyonlarıyla zenginleştirilmiş
+ * Optimize edilmiş LoadingBar bileşeni
+ * Sayfa geçişlerini hızlandırmak için yeniden düzenlendi
  */
-const LoadingBar = () => {
-  const [isLoading, setIsLoading] = useState(false);
+export default function LoadingBar() {
+  const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [isComplete, setIsComplete] = useState(true);
+  
   const pathname = usePathname();
   const searchParams = useSearchParams();
-
-  // Sayfa değişikliklerini dinle
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    let timeout: NodeJS.Timeout;
-
-    const startLoading = () => {
-      setIsLoading(true);
-      setProgress(0);
-
-      // Hızlı başlangıç ve yavaşlayan ilerleme
-      interval = setInterval(() => {
-        setProgress(prevProgress => {
-          if (prevProgress >= 99) {
-            clearInterval(interval);
-            return 99;
-          }
-          
-          // İlk %80'e hızlı ulaş, sonra yavaşla
-          const increment = prevProgress < 80 
-            ? Math.random() * 10 
-            : Math.random() * 2;
-            
-          return Math.min(prevProgress + increment, 99);
-        });
-      }, 100);
-    };
-
-    const completeLoading = () => {
-      setProgress(100);
-      
-      // Hemen kaldırma - yavaş yükleme sorununa çözüm
-      timeout = setTimeout(() => {
-        setIsLoading(false);
-      }, 300);
-    };
-
-    // Sayfa değişikliği olursa yüklemeyi başlat
-    startLoading();
+  
+  // Interval ve timeout referansları
+  const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const completeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  
+  /**
+   * Yükleme işlemini başlat
+   */
+  const startLoading = () => {
+    // Devam eden işlemleri temizle
+    if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
+    if (completeTimeoutRef.current) clearTimeout(completeTimeoutRef.current);
     
-    // Sayfa tam yüklendiğinde yüklemeyi tamamla
-    if (document.readyState === 'complete') {
-      completeLoading();
-    } else {
-      window.addEventListener('load', completeLoading);
+    // İlk duruma dön
+    setLoading(true);
+    setIsComplete(false);
+    setProgress(5); // Başlangıç değeri
+    
+    // Yükleme ilerlemesini güncelle (optimize edilmiş intervaller)
+    progressIntervalRef.current = setInterval(() => {
+      setProgress(prevProgress => {
+        if (prevProgress >= 90) {
+          // 90%'dan sonra yavaşla
+          return prevProgress + 0.5;
+        } else if (prevProgress >= 60) {
+          // 60%'dan sonra yavaşla
+          return prevProgress + 1;
+        }
+        // Başlangıçta hızlı ilerle
+        return prevProgress + 2;
+      });
+    }, 80); // Daha hızlı interval
+  };
+  
+  /**
+   * Yükleme işlemini tamamla
+   */
+  const completeLoading = () => {
+    // Interval'i temizle
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+      progressIntervalRef.current = null;
     }
-
+    
+    // %100'e tamamla
+    setProgress(100);
+    
+    // Kısa bir gecikme ile loading state'i kapat
+    completeTimeoutRef.current = setTimeout(() => {
+      setLoading(false);
+      setIsComplete(true);
+      
+      // Sonraki yükleme için sıfırla
+      setTimeout(() => setProgress(0), 200);
+    }, 200); // Daha kısa bir gecikme
+  };
+  
+  // URL değişimlerini izle
+  useEffect(() => {
+    if (!loading) {
+      startLoading();
+    }
+    
+    // İlerlemeyi simüle et
+    const demoLoadTime = Math.random() * 300 + 100; // 100ms-400ms arası
+    const completeTimeout = setTimeout(() => {
+      completeLoading();
+    }, demoLoadTime);
+    
     return () => {
-      clearInterval(interval);
-      clearTimeout(timeout);
-      window.removeEventListener('load', completeLoading);
+      clearTimeout(completeTimeout);
     };
   }, [pathname, searchParams]);
-
-  // Yaprak Taneleri
-  const LeafParticle = ({ index }: { index: number }) => {
-    // Her yaprak için farklı rastgele değerler
-    const size = 6 + Math.random() * 4;
-    const initialX = 10 + index * 20 + Math.random() * 10;
-    const initialY = Math.random() * 10;
-    
-    // Renk temaları - yeşil ve kahverengi tonları
-    const leafColors = [
-      '#4C8B32', // primary
-      '#95C01E', // secondary
-      '#7BAA4A', // primary-400
-      '#AAD03D', // secondary-400
-      '#D6EFC7', // light green
-    ];
-    
-    const color = leafColors[Math.floor(Math.random() * leafColors.length)];
-
-    return (
-      <motion.div
-        className="absolute rounded-full"
-        initial={{ 
-          x: initialX, 
-          y: initialY, 
-          opacity: 0,
-          rotate: 0,
-          scale: 0.5,
-        }}
-        animate={{ 
-          y: initialY - 10,
-          opacity: [0, 1, 0],
-          rotate: Math.random() > 0.5 ? 45 : -45,
-          scale: 1.2,
-        }}
-        transition={{ 
-          duration: 1.5, 
-          ease: "easeOut" 
-        }}
-        style={{
-          width: size,
-          height: size,
-          backgroundColor: color,
-          boxShadow: `0 0 8px ${color}40`,
-        }}
-      />
-    );
-  };
-
+  
+  // Component unmount olduğunda tüm interval ve timeout'ları temizle
+  useEffect(() => {
+    return () => {
+      if (progressIntervalRef.current) clearInterval(progressIntervalRef.current);
+      if (completeTimeoutRef.current) clearTimeout(completeTimeoutRef.current);
+    };
+  }, []);
+  
+  // Projeye özel renk teması
+  const barColor = '#0ea5e9'; // İçerik ile uyumlu mavi renk
+  
   return (
     <AnimatePresence>
-      {isLoading && (
-        <motion.div 
-          className="fixed top-0 left-0 w-full h-1 z-[1000] overflow-hidden"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+      {loading && (
+        <motion.div
+          className="fixed top-0 left-0 right-0 z-[9999] h-0.5 bg-transparent overflow-hidden"
+          initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.2 }}
         >
-          {/* Ana ilerleme çubuğu - Doğal gradient */}
           <motion.div
-            className="h-full bg-gradient-to-r from-primary-300 via-secondary-400 to-primary-500 relative"
-            initial={{ width: '0%' }}
-            animate={{ width: `${progress}%` }}
-            transition={{
-              ease: progress > 80 ? "circOut" : "easeOut",
-              duration: 0.3,
+            className="h-full"
+            style={{ 
+              backgroundColor: barColor,
+              width: `${progress}%` 
             }}
-          >
-            {/* Parlaklık efekti */}
-            <motion.div 
-              className="absolute top-0 right-0 h-full w-20 bg-gradient-to-r from-transparent to-white/30" 
-              animate={{ 
-                x: ['-100%', '100%'] 
-              }}
-              transition={{ 
-                repeat: Infinity,
-                duration: 1.5, 
-                ease: "linear",
-              }}
-            />
-            
-            {/* Yaprak tanecikler */}
-            <div className="absolute top-1 left-0 h-full">
-              {Array.from({ length: 8 }).map((_, index) => (
-                <LeafParticle key={index} index={index} />
-              ))}
-            </div>
-          </motion.div>
-          
-          {/* Arka plan efekti - Toprak görünümü */}
-          <div className="absolute top-1 left-0 w-full h-6 rounded-b-full bg-gradient-to-b from-secondary-600/10 to-transparent blur-sm" />
+            transition={{ ease: "easeOut" }}
+          />
         </motion.div>
       )}
     </AnimatePresence>
   );
-};
-
-export default LoadingBar; 
+} 

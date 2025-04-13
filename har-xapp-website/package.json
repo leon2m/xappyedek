@@ -16,7 +16,9 @@
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
+    "@types/canvas-confetti": "1.9.0",
     "@types/nodemailer": "^6.4.17",
+    "canvas-confetti": "1.9.3",
     "clsx": "^2.1.1",
     "critters": "^0.0.23",
     "framer-motion": "^12.6.5",
