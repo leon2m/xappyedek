@@ -1,52 +1,47 @@
 [build]
   base = "har-xapp-website"
-  command = "CI=false npm run build:netlify"
+  command = "npm run build:netlify"
   publish = "out"
 
 [build.environment]
   NETLIFY = "true"
-  NODE_VERSION = "20"
+  NODE_VERSION = "16"
   NEXT_TELEMETRY_DISABLED = "1"
   DISABLE_ESLINT_PLUGIN = "true"
   SKIP_ESLINT_CHECK = "true"
   # Netlify'ın Yarn kullanmasını engellemek için
   NETLIFY_USE_YARN = "false"
-  NPM_FLAGS = "--no-package-lock --legacy-peer-deps --no-audit"
+  NPM_FLAGS = "--no-package-lock --legacy-peer-deps"
   CI = "false"
 
-# Netlify build plugins
+# Next.js projeleri için özel plugin
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
-# Sorun gidermek için doğrudan npm komutlarını çalıştıran hook
-[[plugins]]
-  package = "netlify-plugin-inline-functions-env"
-
-[[plugins]]
-  package = "netlify-plugin-cache-nextjs"
-
-[functions]
-  directory = "netlify/functions"
-  node_bundler = "esbuild"
-
-# Build öncesi ve sonrası özel komutlar
+# Build öncesi yapılması gerekenler (basitleştirildi)
 [build.lifecycle]
-  onBuild = '''
-  echo "Removing old build files..."
-  rm -rf .next out || true
-  echo "Starting Next.js build..."
-  NODE_ENV=production npm run build:netlify
-  '''
+  onBuild = "echo 'Starting Next.js build...'"
 
-[build.processing]
-  skip_processing = true
+# Redirect ayarları
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = false
+  conditions = {Language = ["tr"]}
 
-# Build cache ayarları
 [[redirects]]
   from = "/_next/static/*"
   to = "/static/:splat"
   status = 301
   force = true
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+[build.processing]
+  skip_processing = true
 
 [build.processing.css]
   bundle = false

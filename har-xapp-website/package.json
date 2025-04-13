@@ -3,13 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": ">=20.0.0",
-    "npm": ">=10.0.0"
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
   },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:netlify": "NODE_ENV=production next build",
+    "build:netlify": "cross-env NODE_ENV=production SKIP_ESLINT_CHECK=true DISABLE_ESLINT_PLUGIN=true next build",
     "build:clean": "rimraf node_modules/.cache && rimraf .next && rimraf out && next build",
     "start": "next start",
     "lint": "next lint --no-cache",
@@ -43,6 +43,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "autoprefixer": "^10.4.16",
+    "cross-env": "7.0.3",
     "eslint": "^9",
     "eslint-config-next": "15.3.0",
     "file-loader": "^6.2.0",
