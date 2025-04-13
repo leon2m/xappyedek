@@ -294,18 +294,18 @@ export default function AboutPage() {
               </span>
             </h2>
             
-            <div className="prose prose-lg max-w-none text-slate-700">
-              <p>
-                AR Solutions tarafından geliştirilen <strong>H-AR XaPP</strong>, kurumsal iç süreçleri ve çalışan deneyimini yeniden tanımlamak üzere tasarlanmış, modüler yapıya sahip premium bir "süper uygulamadır". Kurumların benzersiz ihtiyaçlarına göre şekillenen H-AR XaPP, iletişimi güçlendirir, süreçleri optimize eder ve çalışan bağlılığını artırır.
-              </p>
-              
-              <p>
-                SAP ve Microsoft ekosistemleriyle entegre çalışarak, dijital çalışma ortamınızın doğal bir uzantısı haline gelir. Oryantasyon süreçlerinden günlük iş akışlarına kadar tüm temas noktalarını tek bir zarif ve işlevsel arayüzde toplar.
-              </p>
-              
-              <p>
-                Japon tasarım felsefesinden ilham alan platform, yalın çizgiler, amaç odaklı sadelik ve beyaz, #4C8B32 (birincil yeşil) ve #95C01E (ikincil yeşil) renklerinden oluşan huzur veren bir palet ile sade, berrak ve kullanıcı dostu bir deneyim sunar.
-              </p>
+            <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
+              <div className="mx-auto max-w-2xl sm:text-center">
+                <h2 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Vizyonumuz &amp; Misyonumuz</h2>
+                <p className="mt-6 text-lg leading-8 text-slate-600">
+                  İş süreçlerini dijitalleştiren ve değer katan yenilikçi AR çözümleri geliştirerek kurumsal verimliliği artırmak.
+                </p>
+              </div>
+              <div className="prose prose-lg max-w-none text-slate-700">
+                <p>
+                  AR Solutions tarafından geliştirilen <strong>H-AR XaPP</strong>, kurumsal iç süreçleri ve çalışan deneyimini yeniden tanımlamak üzere tasarlanmış, modüler yapıya sahip premium bir &ldquo;süper uygulamadır&rdquo;. Kurumların benzersiz ihtiyaçlarına göre şekillenen H-AR XaPP, iletişimi güçlendirir, süreçleri optimize eder ve çalışan bağlılığını artırır.
+                </p>
+              </div>
             </div>
           </div>
           

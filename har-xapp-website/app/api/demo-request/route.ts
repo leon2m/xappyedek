@@ -11,7 +11,7 @@ const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/ar-sol
 
 // MongoDB bağlantısı ve şema tanımı
 let demoRequestSchema: mongoose.Schema;
-let DemoRequest: mongoose.Model<any>;
+let DemoRequest: mongoose.Model<mongoose.Document>;
 
 try {
   // Şemayı bir kez tanımla

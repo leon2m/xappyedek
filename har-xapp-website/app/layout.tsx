@@ -1,10 +1,7 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import Header from '@/components/ui/Header';
-import Footer from '@/components/ui/Footer';
 import LoadingBar from '@/components/ui/LoadingBar';
-import PageTransition from '@/components/ui/PageTransition';
 import FullScreenLoader from '@/components/ui/FullScreenLoader';
 import ScrollToTop from '@/components/ui/ScrollToTop';
 import Script from 'next/script';
