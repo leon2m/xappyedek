@@ -6,6 +6,7 @@ import FullScreenLoader from '@/components/ui/FullScreenLoader';
 import ScrollToTop from '@/components/ui/ScrollToTop';
 import Script from 'next/script';
 import NotFoundCheck from '@/components/ui/NotFoundCheck';
+import { Suspense } from 'react';
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -45,10 +46,14 @@ export default function RootLayout({
       </head>
       <body className={`${inter.className} smooth-scroll antialiased bg-white text-slate-900 overflow-x-hidden will-change-scroll backface-hidden`}>
         {/* Tam ekran yükleme animasyonu */}
-        <FullScreenLoader />
+        <Suspense fallback={null}>
+          <FullScreenLoader />
+        </Suspense>
         
         {/* Sayfa yükleme çubuğu - sayfalar arası geçişler için */}
-        <LoadingBar />
+        <Suspense fallback={null}>
+          <LoadingBar />
+        </Suspense>
         
         {/* Yukarı çık widget butonu - görünen viewport'un sağ alt köşesinde */}
         <ScrollToTop />
