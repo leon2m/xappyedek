@@ -71,32 +71,32 @@ const Integrations = () => {
 
   return (
     <>
-      <section id="integrations" ref={ref} className="py-20 bg-gradient-to-b from-white to-primary-50 relative overflow-hidden">
+      <section id="integrations" ref={ref} className="py-20 px-4 sm:px-6 bg-gradient-to-b from-white to-primary-50 relative overflow-hidden">
         {/* Arka plan dekoratif elemanları */}
         <div className="absolute w-3/4 h-3/4 right-0 top-0 rounded-bl-full bg-gradient-to-bl from-primary/5 to-transparent -z-10"></div>
         <div className="absolute w-1/2 h-1/2 left-0 bottom-0 rounded-tr-full bg-gradient-to-tr from-secondary/5 to-transparent -z-10"></div>
         <div className="absolute inset-0 bg-grid-primary/10 opacity-30"></div>
         
-        <div className="container-custom">
+        <div className="container mx-auto max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-16"
+            className="text-center mb-10 md:mb-16"
           >
-            <span className="inline-flex items-center rounded-full bg-white/70 backdrop-blur-md px-6 py-2 text-base font-medium text-primary border border-primary/20 shadow-lg shadow-primary/10">
+            <span className="inline-flex items-center rounded-full bg-white/70 backdrop-blur-md px-4 sm:px-6 py-2 text-sm sm:text-base font-medium text-primary border border-primary/20 shadow-lg shadow-primary/10">
               <FaSitemap className="w-4 h-4 mr-2 text-primary" />
               Kusursuz Bağlantı
             </span>
-            <h2 className="section-title mt-4">Güçlü Entegrasyonlar</h2>
-            <p className="section-subtitle mx-auto">
+            <h2 className="text-3xl sm:text-4xl font-bold mt-4 text-gray-900">Güçlü Entegrasyonlar</h2>
+            <p className="text-base sm:text-lg text-gray-600 mt-4 max-w-3xl mx-auto">
               H-AR XaPP, mevcut sistemlerinizle sorunsuz çalışmak için tasarlanmıştır. SAP, Microsoft ve diğer kurumsal
               sistemlerle kolayca entegre edilebilir.
             </p>
           </motion.div>
 
           {/* Entegrasyon şeması */}
-          <div className="relative py-10 mb-16">
+          <div className="relative py-10 mb-10 md:mb-16 overflow-x-hidden">
             <motion.div
               initial={{ opacity: 0 }}
               animate={isInView ? { opacity: 1 } : { opacity: 0 }}
@@ -104,40 +104,40 @@ const Integrations = () => {
               className="absolute inset-0 flex justify-center items-center"
             >
               <div className="w-full h-1 bg-white/40 backdrop-blur-sm md:max-w-3xl"></div>
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-lg border border-primary/20">
-                <div className="text-3xl flex items-center justify-center">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 sm:w-24 h-16 sm:h-24 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-lg border border-primary/20">
+                <div className="text-2xl sm:text-3xl flex items-center justify-center">
                   <motion.div 
                     animate={{ rotate: 360 }}
                     transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
                   >
-                    <HiOutlineCog className="w-12 h-12 text-primary/80" />
+                    <HiOutlineCog className="w-8 sm:w-12 h-8 sm:h-12 text-primary/80" />
                   </motion.div>
                 </div>
                 <div className="absolute inset-0 rounded-full border-2 border-dashed border-primary/20 animate-spin-slow"></div>
               </div>
             </motion.div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 relative z-10">
               {integrations.map((integration, index) => (
                 <motion.div
                   key={integration.name}
                   initial={{ opacity: 0, y: 20 }}
                   animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                   transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
-                  className="rounded-xl p-6 backdrop-blur-md bg-white/80 border border-primary-100/20 shadow-xl hover:shadow-2xl transition-all duration-300 flex flex-col h-full"
+                  className="rounded-xl p-4 sm:p-6 backdrop-blur-md bg-white/80 border border-primary-100/20 shadow-xl hover:shadow-2xl transition-all duration-300 flex flex-col h-full"
                 >
-                  <div className="mb-4 bg-gradient-to-br from-primary/10 to-secondary/10 w-16 h-16 rounded-full flex items-center justify-center shadow-inner">
+                  <div className="mb-4 bg-gradient-to-br from-primary/10 to-secondary/10 w-12 sm:w-16 h-12 sm:h-16 rounded-full flex items-center justify-center shadow-inner">
                     {integration.logo}
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">{integration.name}</h3>
-                  <p className="text-gray-600 mb-4">{integration.description}</p>
-                  <ul className="text-left w-full space-y-2 mt-auto">
+                  <h3 className="text-lg sm:text-xl font-semibold mb-2">{integration.name}</h3>
+                  <p className="text-sm sm:text-base text-gray-600 mb-4">{integration.description}</p>
+                  <ul className="text-left w-full space-y-1 sm:space-y-2 mt-auto">
                     {integration.features.map((feature, i) => (
                       <li key={i} className="flex items-start">
                         <span className="text-primary mr-2 mt-1">
                           <HiOutlineChevronRight className="w-4 h-4" />
                         </span>
-                        <span className="text-gray-600 text-sm">{feature}</span>
+                        <span className="text-gray-600 text-xs sm:text-sm">{feature}</span>
                       </li>
                     ))}
                   </ul>
@@ -151,10 +151,10 @@ const Integrations = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.6, delay: 0.5 }}
-            className="bg-white/70 backdrop-blur-md rounded-2xl p-8 shadow-lg border border-primary-100/20 mb-16"
+            className="bg-white/70 backdrop-blur-md rounded-2xl p-4 sm:p-8 shadow-lg border border-primary-100/20 mb-10 md:mb-16 overflow-x-auto"
           >
-            <h3 className="text-xl font-semibold mb-6 text-center">Desteklenen Entegrasyonlar</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-6 items-center justify-center">
+            <h3 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6 text-center">Desteklenen Entegrasyonlar</h3>
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-4 sm:gap-6 items-center justify-center min-w-[400px]">
               {additionalIntegrations.map((item, index) => (
                 <motion.div
                   key={index}
@@ -163,10 +163,10 @@ const Integrations = () => {
                   transition={{ duration: 0.3, delay: 0.2 + (index * 0.05) }}
                   className="flex flex-col items-center justify-center"
                 >
-                  <div className="w-12 h-12 rounded-full bg-white shadow-md border border-gray-100 flex items-center justify-center text-gray-600 hover:text-primary transition-colors duration-300">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white shadow-md border border-gray-100 flex items-center justify-center text-gray-600 hover:text-primary transition-colors duration-300">
                     {item.logo}
                   </div>
-                  <span className="text-xs text-gray-500 mt-2">{item.name}</span>
+                  <span className="text-xs text-gray-500 mt-2 text-center">{item.name}</span>
                 </motion.div>
               ))}
             </div>
@@ -178,7 +178,7 @@ const Integrations = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.6, delay: 0.6 }}
-            className="bg-white/80 backdrop-blur-md rounded-2xl p-8 shadow-lg border border-primary-100/20"
+            className="bg-white/80 backdrop-blur-md rounded-2xl p-4 sm:p-8 shadow-lg border border-primary-100/20"
           >
             <div className="grid md:grid-cols-2 gap-8 items-center">
               <div>
