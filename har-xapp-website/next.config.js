@@ -17,18 +17,8 @@ const nextConfig = {
     // Production build'de sorun çıkartabilen özellikleri kapatıyoruz
     optimizeCss: false,
   },
-  // Hatalı sayfaları statik export'tan hariç tut
-  exportPathMap: async function (
-    defaultPathMap,
-    { dev, dir, outDir, distDir, buildId }
-  ) {
-    // Teşekkürler sayfalarını çıkarıyoruz, bunları client taraflı ele alacağız
-    delete defaultPathMap['/demo-talep/tesekkurler'];
-    delete defaultPathMap['/iletisim/tesekkurler'];
-    
-    return defaultPathMap;
-  },
-  // Atlanan sayfalar için 404 yerine client tarafında yönlendirme yapılacak
+  // App Router ile exportPathMap kullanılamaz, kaldırıyoruz
+  // Bunun yerine Netlify yönlendirmeleriyle çözüyoruz
   trailingSlash: false,
 };
 
