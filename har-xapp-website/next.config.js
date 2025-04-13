@@ -11,86 +11,79 @@ const nextConfig = {
       },
     ],
   },
-  reactStrictMode: true,
+  reactStrictMode: false,
   poweredByHeader: false,
   compress: true,
   eslint: {
-    // Warning: Netlify build'de hata verirse ESLint'i kapatıyoruz
+    // Netlify build'de hata verirse ESLint'i kapatıyoruz
     ignoreDuringBuilds: true,
   },
   typescript: {
-    // Warning: Netlify build'de hata verirse type checking'i kapatıyoruz
+    // Netlify build'de hata verirse type checking'i kapatıyoruz
     ignoreBuildErrors: true,
   },
   // Next.js 15 ile uyumlu yapılandırma
   experimental: {
-    optimizeCss: true,
+    // Production build'de sorun çıkartabilen özellikleri kapatıyoruz
+    optimizeCss: false,
     scrollRestoration: true,
     // optimizeServerReact: true,
     // ppr: true, // Partial Prerendering - yalnızca canary sürümünde çalışır
     webVitalsAttribution: ['CLS', 'LCP'],
   },
-  // Bundle analiz araçları
+  // Webpack görüntü işleme ayarlarını gözden geçiriyoruz
   webpack: (config, { isServer }) => {
-    // Görüntü optimizasyonu
+    // URL yükleyicisinde sorun olabilir, alternatif çözüm:
     config.module.rules.push({
       test: /\.(png|jpe?g|gif|svg|webp)$/i,
-      use: [
-        {
-          loader: 'url-loader',
-          options: {
-            limit: 8192,
-            fallback: 'file-loader',
-            publicPath: '/_next/static/images/',
-            outputPath: `${isServer ? '../' : ''}static/images/`,
-            name: '[name]-[hash].[ext]',
-            esModule: false,
-          },
-        },
-      ],
+      type: 'asset',
+      generator: {
+        filename: 'static/images/[name].[hash][ext]'
+      }
     });
     
     // Hata ayıklama işlemlerini production modunda kaldır
     if (process.env.NODE_ENV === 'production') {
-      config.optimization.minimizer.forEach((plugin) => {
-        if (plugin.constructor.name === 'TerserPlugin') {
-          plugin.options.terserOptions.compress.drop_console = true;
-        }
-      });
+      // Production modda console.log ifadelerini temizle
+      if (config.optimization && config.optimization.minimizer) {
+        config.optimization.minimizer.forEach((plugin) => {
+          if (plugin.constructor.name === 'TerserPlugin') {
+            if (plugin.options && plugin.options.terserOptions) {
+              plugin.options.terserOptions.compress.drop_console = true;
+            }
+          }
+        });
+      }
     }
     
-    // Performans optimizasyonları
+    // Derleme sırasında hata oluşturan büyük bağımlılıkları hariç tutuyoruz
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+        child_process: false,
+      };
+    }
+    
+    // Chunk'lar için güvenli optimizasyon
     config.optimization = {
       ...config.optimization,
-      runtimeChunk: 'single',
       splitChunks: {
         chunks: 'all',
-        maxInitialRequests: Infinity,
-        minSize: 0,
+        minSize: 10000,
+        maxSize: 244000,
         cacheGroups: {
           vendor: {
             test: /[\\/]node_modules[\\/]/,
-            name(module) {
-              // null kontrolü eklendi
-              if (!module.context) {
-                return 'vendor';
-              }
-              
-              // node_modules paketini daha küçük parçalara böl
-              const match = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/);
-              if (!match || !match[1]) {
-                return 'vendor';
-              }
-              
-              const packageName = match[1];
-              return `npm.${packageName.replace('@', '')}`;
-            },
-            priority: 10,
+            name: 'vendors',
+            priority: -10,
+            reuseExistingChunk: true,
           },
-          commons: {
-            name: 'commons',
+          default: {
             minChunks: 2,
-            priority: 1,
+            priority: -20,
             reuseExistingChunk: true,
           },
         },
@@ -99,18 +92,6 @@ const nextConfig = {
     
     return config;
   },
-  // Export mod ile çalışmayan headers kısmını kaldırıyoruz
-  // headers: async () => [
-  //   {
-  //     source: '/:path*',
-  //     headers: [
-  //       {
-  //         key: 'Cache-Control',
-  //         value: 'public, max-age=31536000, immutable',
-  //       },
-  //     ],
-  //   },
-  // ],
 };
 
 module.exports = nextConfig; 

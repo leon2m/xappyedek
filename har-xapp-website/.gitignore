@@ -81,3 +81,9 @@ desktop.ini
 # Diğer
 .vercel
 .netlify
+
+# Yarn dosyaları
+yarn.lock
+.yarn/
+.yarnrc
+.pnp.*
