@@ -3,17 +3,7 @@ const nextConfig = {
   output: 'export',
   images: {
     unoptimized: true,
-    domains: ['i.hizliresim.com'],
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'i.hizliresim.com',
-      },
-    ],
   },
-  reactStrictMode: false,
-  poweredByHeader: false,
-  compress: true,
   eslint: {
     // Netlify build'de hata verirse ESLint'i kapatıyoruz
     ignoreDuringBuilds: true,
@@ -26,29 +16,20 @@ const nextConfig = {
   experimental: {
     // Production build'de sorun çıkartabilen özellikleri kapatıyoruz
     optimizeCss: false,
-    scrollRestoration: true,
   },
-  // Basitleştirilmiş webpack yapılandırması
-  webpack: (config, { isServer }) => {
-    // Görsel dosyaları için 
-    config.module.rules.push({
-      test: /\.(png|jpe?g|gif|svg|webp)$/i,
-      type: 'asset/resource',
-    });
+  // Hatalı sayfaları statik export'tan hariç tut
+  exportPathMap: async function (
+    defaultPathMap,
+    { dev, dir, outDir, distDir, buildId }
+  ) {
+    // Teşekkürler sayfalarını çıkarıyoruz, bunları client taraflı ele alacağız
+    delete defaultPathMap['/demo-talep/tesekkurler'];
+    delete defaultPathMap['/iletisim/tesekkurler'];
     
-    // Node.js modüllerini tarayıcı için dışlama
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-        net: false,
-        tls: false,
-        child_process: false,
-      };
-    }
-    
-    return config;
+    return defaultPathMap;
   },
+  // Atlanan sayfalar için 404 yerine client tarafında yönlendirme yapılacak
+  trailingSlash: false,
 };
 
 module.exports = nextConfig; 

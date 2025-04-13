@@ -1,6 +1,6 @@
 [build]
   base = "har-xapp-website"
-  command = "npm run build:netlify"
+  command = "npm run build"
   publish = "out"
 
 [build.environment]
@@ -8,11 +8,24 @@
   NODE_VERSION = "18.18.0"
   NEXT_TELEMETRY_DISABLED = "1"
   DISABLE_ESLINT_PLUGIN = "true"
-  SKIP_ESLINT_CHECK = "true"
-  # Netlify'ın Yarn kullanmasını engellemek için
-  NETLIFY_USE_YARN = "false"
-  NPM_FLAGS = "--no-package-lock --legacy-peer-deps"
-  CI = "false"
+  NPM_FLAGS = "--no-optional --legacy-peer-deps"
+
+# Teşekkürler sayfaları için özel yönlendirmeler
+[[redirects]]
+  from = "/demo-talep/tesekkurler"
+  to = "/demo-talep"
+  status = 301
+
+[[redirects]]
+  from = "/iletisim/tesekkurler"
+  to = "/iletisim"
+  status = 301
+
+# Genel yönlendirme
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
 
 # Next.js projeleri için özel plugin
 [[plugins]]
@@ -21,20 +34,6 @@
 # Build öncesi yapılması gerekenler (basitleştirildi)
 [build.lifecycle]
   onBuild = "echo 'Starting Next.js build...'"
-
-# Redirect ayarları
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-  force = false
-  conditions = {Language = ["tr"]}
-
-[[redirects]]
-  from = "/_next/static/*"
-  to = "/static/:splat"
-  status = 301
-  force = true
 
 [functions]
   directory = "netlify/functions"
