@@ -5,7 +5,7 @@
 
 [build.environment]
   NETLIFY = "true"
-  NODE_VERSION = "16"
+  NODE_VERSION = "18.18.0"
   NEXT_TELEMETRY_DISABLED = "1"
   DISABLE_ESLINT_PLUGIN = "true"
   SKIP_ESLINT_CHECK = "true"
