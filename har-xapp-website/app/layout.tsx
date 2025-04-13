@@ -29,12 +29,10 @@ export default function RootLayout({
   return (
     <html lang="tr" className="scroll-smooth">
       <head>
-        {/* Performans için kritik CSS ve preload */}
+        {/* Font dosyasını doğrudan public klasöründen ekleyelim, preload ile önbelleğe almayalım */}
         <link 
-          rel="preload" 
-          href="/fonts/inter-var.woff2" 
-          as="font" 
-          type="font/woff2" 
+          rel="stylesheet" 
+          href="/fonts/inter-var.css" 
           crossOrigin="anonymous" 
         />
         <link 

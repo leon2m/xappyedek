@@ -1,5 +1,4 @@
 [build]
-  base = "har-xapp-website"
   command = "npm run build"
   publish = "out"
 
@@ -10,6 +9,30 @@
   DISABLE_ESLINT_PLUGIN = "true"
   NPM_FLAGS = "--no-optional --legacy-peer-deps --no-engine-strict"
   ENGINE_STRICT = "false"
+
+# Cache-Control headerları
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# SPA yönlendirmeleri
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = false
+  conditions = {Language = [], Role = []}
 
 # Teşekkürler sayfaları için özel yönlendirmeler
 [[redirects]]
@@ -22,19 +45,9 @@
   to = "/iletisim"
   status = 301
 
-# Genel yönlendirme
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-
 # Next.js projeleri için özel plugin
 [[plugins]]
   package = "@netlify/plugin-nextjs"
-
-# Build öncesi yapılması gerekenler (basitleştirildi)
-[build.lifecycle]
-  onBuild = "echo 'Starting Next.js build...'"
 
 [functions]
   directory = "netlify/functions"

@@ -41,7 +41,7 @@ const ContactPage = () => {
     e.preventDefault();
     setFormState(prev => ({ ...prev, loading: true }));
     
-    // Form verilerini loglayalım (gerçek uygulamada burada API çağrısı yapılacak)
+    // Form verilerini loglayalım - Static export için API çağrısı yapılmıyor
     console.log('Form gönderildi:', {
       name: formState.name,
       email: formState.email,
@@ -50,9 +50,39 @@ const ContactPage = () => {
       message: formState.message
     });
     
-    // Static export için doğrudan teşekkürler sayfasına yönlendir
+    // Static export uyumlu yönlendirme yapıyoruz
+    // Gerçek projede burada Netlify Forms kullanılabilir
     setTimeout(() => {
       setFormState(prev => ({ ...prev, submitted: true, loading: false }));
+      
+      // Netlify Forms için form verileri
+      if (typeof window !== 'undefined') {
+        try {
+          // Netlify Forms için gizli form oluştur
+          const netlifyForm = document.createElement('form');
+          netlifyForm.setAttribute('method', 'POST');
+          netlifyForm.setAttribute('name', 'contact');
+          netlifyForm.setAttribute('data-netlify', 'true');
+          netlifyForm.setAttribute('hidden', 'true');
+          
+          // Form alanlarını ekle
+          const formFields = ['name', 'email', 'phone', 'subject', 'message'];
+          formFields.forEach(field => {
+            const input = document.createElement('input');
+            input.setAttribute('type', 'text');
+            input.setAttribute('name', field);
+            input.setAttribute('value', formState[field as keyof typeof formState] as string);
+            netlifyForm.appendChild(input);
+          });
+          
+          // Formu document'e ekle, gönder ve kaldır
+          document.body.appendChild(netlifyForm);
+          netlifyForm.submit();
+          document.body.removeChild(netlifyForm);
+        } catch (error) {
+          console.error('Form gönderme hatası:', error);
+        }
+      }
       
       setTimeout(() => {
         window.location.href = '/iletisim/tesekkurler';
@@ -204,7 +234,16 @@ const ContactPage = () => {
                 <div className="p-8">
                   <h2 className="text-2xl font-bold mb-6 text-gray-800">Bize Mesaj Gönderin</h2>
                   
-                  <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
+                  <form 
+                    ref={formRef} 
+                    onSubmit={handleSubmit}
+                    name="contact"
+                    method="POST"
+                    data-netlify="true"
+                    className="space-y-6"
+                  >
+                    <input type="hidden" name="form-name" value="contact" />
+                    
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-2">
                         <label htmlFor="name" className="block text-sm font-medium text-gray-700">İsim Soyisim</label>

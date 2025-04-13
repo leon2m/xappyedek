@@ -1,5 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Production ve development ortamlarına göre farklı konfigürasyon 
+  ...(process.env.NODE_ENV === 'production' ? {
+    output: 'export', // Sadece production'da static export kullan
+    distDir: 'out',
+  } : {}),
+  
+  assetPrefix: '/', // Varlık öneki
   images: {
     unoptimized: true,
   },
@@ -18,7 +25,7 @@ const nextConfig = {
   },
   // App Router ile exportPathMap kullanılamaz, kaldırıyoruz
   // Bunun yerine Netlify yönlendirmeleriyle çözüyoruz
-  trailingSlash: false,
+  trailingSlash: true, // Sondaki eğik çizgiyi etkinleştiriyoruz
 };
 
 module.exports = nextConfig; 

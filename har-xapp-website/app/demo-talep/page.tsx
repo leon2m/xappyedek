@@ -98,7 +98,7 @@ const DemoRequestPage = () => {
     e.preventDefault();
     setFormState(prev => ({ ...prev, loading: true }));
     
-    // Form verilerini loglayalım (gerçek uygulamada burada API çağrısı yapılacak)
+    // Form verilerini loglayalım - Static export için API çağrısı yapılmıyor
     console.log('Demo talebi gönderildi:', {
       name: formState.name,
       company: formState.company,
@@ -109,9 +109,46 @@ const DemoRequestPage = () => {
       message: formState.message
     });
     
-    // Static export için doğrudan teşekkürler sayfasına yönlendir
+    // Static export uyumlu yönlendirme yapıyoruz
+    // Gerçek projede burada Netlify Forms veya benzeri client-side form handling kullanılabilir
     setTimeout(() => {
       setFormState(prev => ({ ...prev, submitted: true, loading: false }));
+      
+      // Netlify Forms için form verileri
+      if (typeof window !== 'undefined') {
+        try {
+          // Netlify Forms için gizli form oluştur
+          const netlifyForm = document.createElement('form');
+          netlifyForm.setAttribute('method', 'POST');
+          netlifyForm.setAttribute('name', 'demo-request');
+          netlifyForm.setAttribute('data-netlify', 'true');
+          netlifyForm.setAttribute('hidden', 'true');
+          
+          // Form alanlarını ekle
+          const formFields = ['name', 'company', 'position', 'email', 'phone', 'message'];
+          formFields.forEach(field => {
+            const input = document.createElement('input');
+            input.setAttribute('type', 'text');
+            input.setAttribute('name', field);
+            input.setAttribute('value', formState[field as keyof typeof formState] as string);
+            netlifyForm.appendChild(input);
+          });
+          
+          // İlgi alanları için input ekle
+          const interestsInput = document.createElement('input');
+          interestsInput.setAttribute('type', 'text');
+          interestsInput.setAttribute('name', 'interests');
+          interestsInput.setAttribute('value', formState.interests.join(', '));
+          netlifyForm.appendChild(interestsInput);
+          
+          // Formu document'e ekle, gönder ve kaldır
+          document.body.appendChild(netlifyForm);
+          netlifyForm.submit();
+          document.body.removeChild(netlifyForm);
+        } catch (error) {
+          console.error('Form gönderme hatası:', error);
+        }
+      }
       
       setTimeout(() => {
         window.location.href = '/demo-talep/tesekkurler';
@@ -316,9 +353,18 @@ const DemoRequestPage = () => {
   }
   
   return (
-    <div className="min-h-screen pt-32 pb-20">
+    <div className="pt-32 pb-20 bg-gradient-to-b from-white to-gray-50">
       <div className="container mx-auto px-4">
-        <div className="max-w-3xl mx-auto">
+        <form 
+          ref={formRef}
+          onSubmit={handleSubmit}
+          name="demo-request"
+          method="POST"
+          data-netlify="true" 
+          className="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-8 border border-gray-100"
+        >
+          <input type="hidden" name="form-name" value="demo-request" />
+          
           <div className="text-center mb-12">
             <motion.h1
               initial={{ opacity: 0, y: -20 }}
@@ -443,7 +489,7 @@ const DemoRequestPage = () => {
               </div>
             </div>
           </motion.div>
-        </div>
+        </form>
       </div>
     </div>
   );
