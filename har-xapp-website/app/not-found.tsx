@@ -5,10 +5,6 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 
-export function generateStaticParams() {
-  return [];
-}
-
 export default function NotFound() {
   const router = useRouter();
   const containerRef = useRef<HTMLDivElement>(null);
