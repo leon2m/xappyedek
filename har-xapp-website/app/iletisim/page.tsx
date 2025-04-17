@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { HiMail, HiPhone, HiLocationMarker, HiClock } from 'react-icons/hi';
+import { HiMail, HiPhone, HiClock } from 'react-icons/hi';
 
 interface FormState {
   name: string;
@@ -18,8 +18,6 @@ interface FormState {
 
 const ContactPage = () => {
   const formRef = useRef<HTMLFormElement>(null);
-  const mapRef = useRef<HTMLDivElement>(null);
-  const isMapInView = useInView(mapRef, { once: true, amount: 0.3 });
   const router = useRouter();
   
   const [formState, setFormState] = useState<FormState>({
@@ -92,11 +90,11 @@ const ContactPage = () => {
   
   const contactInfo = [
     {
-      icon: <HiLocationMarker className="w-6 h-6 text-primary" />,
-      title: 'Adres',
-      description: 'Kozyatağı Mah., Saniye Ermutlu Sk. No:6, 34742 Kadıköy/İstanbul',
-      link: 'https://maps.google.com/?q=Kozyatağı+Mah.,+Saniye+Ermutlu+Sk.+No:6,+34742+Kadıköy/İstanbul',
-      linkText: 'Haritada Göster'
+      icon: <HiMail className="w-6 h-6 text-primary" />,
+      title: 'E-posta',
+      description: 'info@arsolutions.com.tr',
+      link: 'mailto:info@arsolutions.com.tr',
+      linkText: 'Mail Gönder'
     },
     {
       icon: <HiPhone className="w-6 h-6 text-primary" />,
@@ -104,13 +102,6 @@ const ContactPage = () => {
       description: '+90 (216) 380 57 67',
       link: 'tel:+902163805767',
       linkText: 'Hemen Ara'
-    },
-    {
-      icon: <HiMail className="w-6 h-6 text-primary" />,
-      title: 'E-posta',
-      description: 'info@arsolutions.com.tr',
-      link: 'mailto:info@arsolutions.com.tr',
-      linkText: 'Mail Gönder'
     },
     {
       icon: <HiClock className="w-6 h-6 text-primary" />,
@@ -343,25 +334,6 @@ const ContactPage = () => {
                   </form>
                 </div>
               </div>
-            </div>
-          </div>
-          
-          {/* Google Maps */}
-          <div 
-            ref={mapRef}
-            className="mt-20"
-          >
-            <div className={`rounded-2xl overflow-hidden border border-gray-200 shadow-md h-[400px] ${isMapInView ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500`}>
-              <iframe 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3010.835787604156!2d29.100926076336237!3d41.001628124362135!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14cac7f884155555%3A0x3f1c2d577fae1b1a!2zS296eWF0YcSfxLEsIFNhbml5ZSBFcm11dGx1IFNrLiBObzo2LCAzNDc0MiBLYWTEsWvDtnkvxLBzdGFuYnVs!5e0!3m2!1str!2str!4v1684851712492!5m2!1str!2str" 
-                width="100%" 
-                height="400" 
-                style={{ border: 0 }}
-                allowFullScreen 
-                loading="lazy" 
-                referrerPolicy="no-referrer-when-downgrade"
-                title="AR Solutions Konum"
-              ></iframe>
             </div>
           </div>
         </div>

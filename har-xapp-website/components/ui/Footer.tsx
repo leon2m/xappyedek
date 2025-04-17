@@ -105,11 +105,11 @@ const Footer = () => {
     {
       title: "Çözümler",
       links: [
-        { label: "İnsan Kaynakları", href: "/cozumler/insan-kaynaklari" },
-        { label: "Finans & Muhasebe", href: "/cozumler/finans-muhasebe" },
-        { label: "Operasyon Yönetimi", href: "/cozumler/operasyon-yonetimi" },
-        { label: "İdari İşler", href: "/cozumler/idari-isler" },
-        { label: "Kurumsal Akademi", href: "/cozumler/kurumsal-akademi" },
+        { label: "İnsan Kaynakları", href: "/modul/ik" },
+        { label: "Finans & Muhasebe", href: "/modul/finans" },
+        { label: "Operasyon Yönetimi", href: "/modul/operasyon" },
+        { label: "IT Yönetimi", href: "/modul/it" },
+        { label: "Entegrasyonlar", href: "/entegrasyonlar" },
       ]
     },
     {
@@ -128,7 +128,7 @@ const Footer = () => {
         { label: "Demo Talep", href: "/demo-talep" },
         { label: "Destek Merkezi", href: "/destek" },
         { label: "Sık Sorulan Sorular", href: "/sss" },
-        { label: "İletişim Bilgileri", href: "/iletisim" },
+        { label: "İletişim", href: "/iletisim" },
         { label: "Gizlilik Politikası", href: "/gizlilik-politikasi" },
       ]
     }
@@ -318,13 +318,6 @@ const Footer = () => {
                 Gizliliğinize saygı duyuyoruz. İstediğiniz zaman abonelikten çıkabilirsiniz.
               </p>
             )}
-            
-            <div className="mt-5 text-slate-600 text-sm">
-              <p className="mb-1"><strong>AR Solutions Teknoloji A.Ş.</strong></p>
-              <p className="mb-1">Ataşehir Bulvarı, Ataşehir İş Merkezi</p>
-              <p className="mb-1">No: 125/A Kat:5, 34758 Ataşehir/İstanbul</p>
-              <p>Tel: +90 (216) 456 78 90</p>
-            </div>
           </motion.div>
         </div>
         
@@ -381,9 +374,6 @@ const Footer = () => {
               ))}
             </div>
           </div>
-          
-          {/* İletişim Bilgileri */}
-
         </div>
       </div>
     </motion.footer>
