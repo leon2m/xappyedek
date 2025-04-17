@@ -6,6 +6,9 @@ import { FaArrowLeft, FaCheck, FaSpinner } from 'react-icons/fa';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 
+// Statik parametreleri çözüm için dışarıda bırakıyoruz
+export { positionParams as generateStaticParams } from '@/lib/staticParams';
+
 // Animasyon varyantları
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },

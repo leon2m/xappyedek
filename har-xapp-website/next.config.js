@@ -4,12 +4,18 @@ const nextConfig = {
   ...(process.env.NODE_ENV === 'production' ? {
     output: 'export', // Sadece production'da static export kullan
     distDir: 'out',
-  } : {}),
+    trailingSlash: true,
+    images: {
+      unoptimized: true,
+    }
+  } : {
+    // Development'da normal build kullan
+    images: {
+      unoptimized: true,
+    }
+  }),
   
   assetPrefix: '/', // Varlık öneki
-  images: {
-    unoptimized: true,
-  },
   eslint: {
     // Netlify build'de hata verirse ESLint'i kapatıyoruz
     ignoreDuringBuilds: true,
@@ -23,9 +29,6 @@ const nextConfig = {
     // Production build'de sorun çıkartabilen özellikleri kapatıyoruz
     optimizeCss: false,
   },
-  // App Router ile exportPathMap kullanılamaz, kaldırıyoruz
-  // Bunun yerine Netlify yönlendirmeleriyle çözüyoruz
-  trailingSlash: true, // Sondaki eğik çizgiyi etkinleştiriyoruz
 };
 
 module.exports = nextConfig; 
