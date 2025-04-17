@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, ReactNode } from 'react';
 import { motion, useSpring } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
@@ -12,50 +12,84 @@ if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-const ParallaxLayer = ({ depth, children }: { depth: number, children: React.ReactNode }) => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      const { innerWidth, innerHeight } = window;
-      setMousePosition({
-        x: (e.clientX - innerWidth / 2) / innerWidth,
-        y: (e.clientY - innerHeight / 2) / innerHeight
-      });
-    };
-    
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
-  
-  return (
-    <div 
-      className="absolute inset-0 w-full h-full preserve-3d"
-      style={{ 
-        transform: `translate3d(${mousePosition.x * depth * 100}px, ${mousePosition.y * depth * 100}px, 0)`,
-        transition: 'transform 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
-      }}
-    >
-      {children}
-    </div>
-  );
-};
-
 const Hero = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const heroContentRef = useRef<HTMLDivElement>(null);
   const [scrollY, setScrollY] = useState(0);
+  const [isClient, setIsClient] = useState(false);
+  
+  // Sabit ışık noktalama değerleri
+  const lightDots = [
+    { width: 2.4, height: 3.1, left: "24.8%", top: "62.6%", opacity: 0.2 },
+    { width: 1.6, height: 2.5, left: "97.6%", top: "84.1%", opacity: 0.2 },
+    { width: 3.2, height: 3.9, left: "44.9%", top: "14.0%", opacity: 0.2 },
+    { width: 2.6, height: 2.4, left: "13.5%", top: "88.2%", opacity: 0.2 },
+    { width: 1.7, height: 3.9, left: "35.7%", top: "20.1%", opacity: 0.2 },
+    { width: 1.5, height: 1.3, left: "46.1%", top: "50.2%", opacity: 0.2 },
+    { width: 2.1, height: 3.4, left: "26.7%", top: "44.8%", opacity: 0.2 },
+    { width: 2.6, height: 3.7, left: "82.0%", top: "74.7%", opacity: 0.2 }
+  ];
+  
+  // Sabit grafik yükseklikleri
+  const chartHeights = ["52.7%", "87.9%", "26.9%", "20.6%"];
+  
+  // Client-side render kontrolü için effect
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
   
   // Kaydırma değerini izle
   useEffect(() => {
     const handleScroll = () => {
       setScrollY(window.scrollY);
     };
-    
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Fare pozisyonu efekti
+  useEffect(() => {
+    if (!sectionRef.current || !isClient) return;
+
+    const mousePositionEffect = (e: MouseEvent) => {
+      if (!sectionRef.current) return;
+      
+      const { left, top, width, height } = sectionRef.current.getBoundingClientRect();
+      const x = (e.clientX - left) / width - 0.5;
+      const y = (e.clientY - top) / height - 0.5;
+
+      const elements = document.querySelectorAll('.parallax-layer');
+      elements.forEach((el) => {
+        const depth = parseFloat((el as HTMLElement).dataset.depth || "0");
+        const moveX = x * depth * 30;
+        const moveY = y * depth * 30;
+        
+        (el as HTMLElement).style.transform = `translate(${moveX}px, ${moveY}px)`;
+      });
+    };
+
+    document.addEventListener('mousemove', mousePositionEffect);
+    return () => {
+      document.removeEventListener('mousemove', mousePositionEffect);
+    };
+  }, [isClient]);
   
+  // ParallaxLayer bileşeni
+  const ParallaxLayer = ({ children, depth = 0 }: { children: ReactNode, depth?: number }) => {
+    return (
+      <div 
+        className="parallax-layer absolute inset-0 pointer-events-none" 
+        data-depth={depth}
+        style={{ 
+          transform: isClient ? undefined : "translate(0px, 0px)",
+          transition: "transform 0.2s ease-out"
+        }}
+      >
+        {children}
+      </div>
+    );
+  };
+
   // GSAP ile animasyonları oluştur
   useEffect(() => {
     const section = sectionRef.current;
@@ -171,7 +205,7 @@ const Hero = () => {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-[120vh] w-full overflow-hidden bg-white" // Hero yüksekliğini azalttım
+      className="relative min-h-[110vh] w-full overflow-hidden bg-white" // Hero yüksekliğini azalttım
     >
       {/* Ana arka plan gradyenı */}
       <motion.div 
@@ -234,26 +268,27 @@ const Hero = () => {
           <div className="absolute bottom-[40%] left-[25%] w-40 h-40 rounded-full bg-secondary/15 blur-xl"></div>
           
           {/* Işık noktalama efektleri */}
-          {[...Array(8)].map((_, i) => (
+          {lightDots.map((dot, i) => (
             <motion.div
               key={i}
               className="absolute rounded-full bg-white"
               style={{
-                width: Math.random() * 3 + 1,
-                height: Math.random() * 3 + 1,
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                boxShadow: "0 0 20px 2px rgba(255, 255, 255, 0.3)"
+                width: dot.width,
+                height: dot.height,
+                left: dot.left,
+                top: dot.top,
+                boxShadow: "0 0 20px 2px rgba(255, 255, 255, 0.3)",
+                opacity: dot.opacity
               }}
               animate={{
                 opacity: [0.2, 0.8, 0.2],
                 scale: [1, 1.5, 1],
               }}
               transition={{
-                duration: Math.random() * 3 + 2,
+                duration: 2 + i * 0.4,
                 repeat: Infinity,
                 ease: "easeInOut",
-                delay: Math.random() * 2
+                delay: i * 0.3
               }}
             />
           ))}
@@ -347,9 +382,8 @@ const Hero = () => {
             </Link>
             
             <Link href="/ozellikler" className="group relative overflow-hidden btn-outline">
-            <div className="absolute inset-0 bg-gradient-to-r from-primary to-secondary opacity-30 blur-lg group-hover:opacity-60 transition-all duration-500"></div>
-            <span className="relative z-10 px-10 py-4 rounded-lg inline-block text-gr font-medium text-lg backdrop-blur-sm">
-              
+              <div className="absolute inset-0 bg-gradient-to-r from-primary to-secondary opacity-30 blur-lg group-hover:opacity-60 transition-all duration-500"></div>
+              <span className="relative z-10 px-10 py-4 rounded-lg inline-block text-gr font-medium text-lg backdrop-blur-sm">
                 Özellikleri Keşfet
               </span>
             </Link>
@@ -416,11 +450,11 @@ const Hero = () => {
                 
                 <div className="flex-1 bg-white/50 rounded-lg overflow-hidden relative border border-primary-100">
                   <div className="absolute inset-4 grid grid-cols-4 gap-4">
-                    {[...Array(4)].map((_, i) => (
+                    {chartHeights.map((height, i) => (
                       <motion.div 
                         key={i}
                         initial={{ height: 0 }}
-                        animate={{ height: `${20 + Math.random() * 80}%` }}
+                        animate={{ height: height }}
                         transition={{ delay: 1.5 + i * 0.1, duration: 1 }}
                         className="bg-gradient-to-t from-primary/70 to-secondary/70 rounded-sm self-end"
                       />
