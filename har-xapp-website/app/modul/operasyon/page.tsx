@@ -8,6 +8,10 @@ import { FaClipboardCheck, FaTasks, FaChartLine, FaExchangeAlt } from 'react-ico
 import { RiTeamFill, RiTimeFill } from 'react-icons/ri';
 import { MdSpeed } from 'react-icons/md';
 
+export function generateStaticParams() {
+  return [{ }];
+}
+
 const OperationModulePage = () => {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, amount: 0.2 });

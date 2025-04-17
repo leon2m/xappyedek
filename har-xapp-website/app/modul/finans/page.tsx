@@ -5,6 +5,13 @@ import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 import Link from 'next/link';
 import { BiMoney, BiReceipt, BiLineChart, BiCreditCard, BiBarChartAlt } from 'react-icons/bi';
 import { HiOutlineArrowNarrowRight, HiOutlineChevronRight, HiCheckCircle } from 'react-icons/hi';
+import { FaChartLine, FaMoneyBillWave, FaChartPie, FaFileInvoiceDollar, FaCreditCard as FaCreditCardIcon, FaProjectDiagram, FaWallet, FaBalanceScale, FaCalculator, FaHandshake, FaRegLightbulb, FaCheckCircle as FaCheckCircleIcon, FaDatabase, FaTasks, FaExchangeAlt } from 'react-icons/fa';
+import { RiTeamFill, RiTimeFill } from 'react-icons/ri';
+import { MdSpeed } from 'react-icons/md';
+
+export function generateStaticParams() {
+  return [];
+}
 
 const FinanceModulePage = () => {
   const ref = useRef<HTMLDivElement>(null);

@@ -5,6 +5,13 @@ import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 import Link from 'next/link';
 import { BiCode, BiDesktop, BiServer, BiShieldQuarter, BiWrench } from 'react-icons/bi';
 import { HiOutlineArrowNarrowRight, HiOutlineChevronRight, HiCheckCircle } from 'react-icons/hi';
+import { FaServer, FaDesktop, FaLock, FaSyncAlt, FaHeadset, FaDatabase, FaClipboardCheck, FaNetworkWired, FaBuysellads, FaUserShield, FaCodeBranch, FaExchangeAlt, FaTasks, FaTools, FaSitemap } from 'react-icons/fa';
+import { RiTeamFill, RiTimeFill } from 'react-icons/ri';
+import { MdSpeed } from 'react-icons/md';
+
+export function generateStaticParams() {
+  return [{ }];
+}
 
 const ITModulePage = () => {
   const ref = useRef<HTMLDivElement>(null);
