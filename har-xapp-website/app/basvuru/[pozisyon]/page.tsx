@@ -5,9 +5,12 @@ import { motion } from 'framer-motion';
 import { FaArrowLeft, FaCheck, FaSpinner } from 'react-icons/fa';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
+import { positionParams } from '../../../lib/staticParams';
 
-// Statik parametreleri çözüm için dışarıda bırakıyoruz
-export { positionParams as generateStaticParams } from '@/lib/staticParams';
+// Statik parametre yapılandırması - bu kısım sadece build için kullanılır
+export function generateStaticParams() {
+  return positionParams;
+}
 
 // Animasyon varyantları
 const fadeIn = {

@@ -29,6 +29,21 @@ const nextConfig = {
     // Production build'de sorun çıkartabilen özellikleri kapatıyoruz
     optimizeCss: false,
   },
+  // Harici modülleri yapılandıralım
+  webpack: (config, { isServer }) => {
+    // Tüm paketlerin doğru çözümlenmesini sağlayalım
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+      path: false,
+    };
+    
+    return config;
+  },
+  // Statik dışa aktarım için gerekli ayarlar
+  env: {
+    STATIC_EXPORT: process.env.NODE_ENV === 'production' ? 'true' : 'false',
+  },
 };
 
 module.exports = nextConfig; 
