@@ -3,13 +3,13 @@
 import React, { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Link from 'next/link';
-import { HiOutlineLightBulb, HiCheckCircle } from 'react-icons/hi';
 import { FaClipboardCheck, FaTasks, FaChartLine, FaExchangeAlt } from 'react-icons/fa';
-import { RiTeamFill, RiTimeFill } from 'react-icons/ri';
 import { MdSpeed } from 'react-icons/md';
+import { RiTeamFill, RiTimeFill } from 'react-icons/ri';
+import { HiOutlineLightBulb } from 'react-icons/hi';
 
 export function generateStaticParams() {
-  return [{ }];
+  return [];
 }
 
 const OperationModulePage = () => {
@@ -204,17 +204,17 @@ const OperationModulePage = () => {
             viewport={{ once: true }}
             variants={fadeIn}
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Operasyon Modülü Faydaları</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Operasyon Modülü Avantajları</h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              H-AR XaPP Operasyon modülü ile işletmenize sağlayacağınız somut faydalar.
+              H-AR XaPP Operasyon modülü ile elde edeceğiniz somut faydalar:
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid md:grid-cols-4 gap-8">
             {benefits.map((benefit, index) => (
               <motion.div 
                 key={index}
-                className="bg-white rounded-xl shadow-md p-6 text-center hover:shadow-lg transition-all duration-300"
+                className="bg-white rounded-xl shadow-md p-8 border border-gray-100 hover:shadow-xl transition-all duration-300 text-center"
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true }}
@@ -223,7 +223,7 @@ const OperationModulePage = () => {
               >
                 <div className="flex justify-center mb-4">{benefit.icon}</div>
                 <h3 className="text-xl font-bold text-gray-800 mb-2">{benefit.title}</h3>
-                <div className="text-3xl font-bold text-emerald-600 mb-3">{benefit.percent}</div>
+                <div className="text-3xl font-bold text-emerald-500 mb-4">{benefit.percent}</div>
                 <p className="text-gray-600">{benefit.description}</p>
               </motion.div>
             ))}
@@ -267,7 +267,7 @@ const OperationModulePage = () => {
       </section>
 
       {/* Integration Section */}
-      <section className="py-20 bg-emerald-50">
+      <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
           <motion.div 
             className="max-w-4xl mx-auto text-center"

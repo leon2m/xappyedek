@@ -10,7 +10,7 @@ import { RiTeamFill, RiTimeFill } from 'react-icons/ri';
 import { MdSpeed } from 'react-icons/md';
 
 export function generateStaticParams() {
-  return [{ }];
+  return [];
 }
 
 const ITModulePage = () => {
