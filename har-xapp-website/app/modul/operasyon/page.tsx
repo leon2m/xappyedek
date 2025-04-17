@@ -8,10 +8,6 @@ import { MdSpeed } from 'react-icons/md';
 import { RiTeamFill, RiTimeFill } from 'react-icons/ri';
 import { HiOutlineLightBulb } from 'react-icons/hi';
 
-export function generateStaticParams() {
-  return [];
-}
-
 const OperationModulePage = () => {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, amount: 0.2 });

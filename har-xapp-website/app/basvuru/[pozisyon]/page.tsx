@@ -35,13 +35,6 @@ const positionData: PositionData = {
   }
 };
 
-// Statik sayfa oluşturma için gerekli fonksiyon
-export function generateStaticParams() {
-  return Object.keys(positionData).map((pozisyon) => ({
-    pozisyon,
-  }));
-}
-
 const ApplicationForm = () => {
   const params = useParams() || {};
   const router = useRouter();

@@ -6,10 +6,6 @@ import CTA from '@/components/sections/CTA';
 import About from '@/components/sections/About';
 import { Suspense } from 'react';
 
-export function generateStaticParams() {
-  return [];
-}
-
 const SectionLoading = () => (
   <div className="min-h-screen flex items-center justify-center">
     <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>

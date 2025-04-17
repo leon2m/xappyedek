@@ -15,10 +15,6 @@ const inter = Inter({
   preload: true,  // Performans için preload
 });
 
-export function generateStaticParams() {
-  return [];
-}
-
 export const metadata: Metadata = {
   title: 'H-AR XaPP | Çalışan Deneyimi İçin Tasarlanmış Süper Uygulama',
   description: 'AR Solutions tarafından geliştirilen H-AR XaPP, kurumsal iç süreçleri ve çalışan deneyimini yeniden tanımlamak üzere tasarlanmış, modüler yapıya sahip premium bir süper uygulama.',

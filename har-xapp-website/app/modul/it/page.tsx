@@ -9,10 +9,6 @@ import { FaServer, FaDesktop, FaLock, FaSyncAlt, FaHeadset, FaDatabase, FaClipbo
 import { RiTeamFill, RiTimeFill } from 'react-icons/ri';
 import { MdSpeed } from 'react-icons/md';
 
-export function generateStaticParams() {
-  return [];
-}
-
 const ITModulePage = () => {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, amount: 0.2 });
