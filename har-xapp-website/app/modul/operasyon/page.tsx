@@ -1,5 +1,6 @@
 'use client';
 
+// Bu dosya statik site oluşturma için server component olarak çalışır
 import React, { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Link from 'next/link';
